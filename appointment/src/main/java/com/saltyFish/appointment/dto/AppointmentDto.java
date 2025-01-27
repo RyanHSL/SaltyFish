@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Schema(
-        name = "Accounts",
+        name = "Appointment",
         description = "Schema to hold Account information"
 )
 public class AppointmentDto {

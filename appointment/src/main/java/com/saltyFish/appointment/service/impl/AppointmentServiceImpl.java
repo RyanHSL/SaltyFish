@@ -34,7 +34,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 //    private void sendCommunication(Appointment appointment, Customer customer) {
-//        var appointmentMsgDto = new com.eazybytes.accounts.dto.AppointmentMsgDto(appointment.getConfirmationId(), customer.getEmail(), customer.getMobileNumber());
+//        var appointmentMsgDto = AppointmentMsgDto(appointment.getConfirmationId(), customer.getEmail(), customer.getMobileNumber());
 //        log.info("Sending Communication request for the details: {}", appointmentMsgDto);
 //        var result = streamBridge.send("sendCommunication-out-0", appointmentMsgDto);
 //        log.info("Is the Communication request successfully processed? : {}", result);

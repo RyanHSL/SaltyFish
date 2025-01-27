@@ -72,15 +72,15 @@ endpoints:
 
 info:
   app:
-    name: "accounts"
-    description: "Eazy Bank Accounts Application"
+    name: "appointment"
+    description: "SaltyFish Appointment Application"
     version: "1.0.0"
 
 logging:
   level:
     com:
-      eazybytes:
-        accounts: DEBUG
+      saltyFish:
+        appointment: DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 

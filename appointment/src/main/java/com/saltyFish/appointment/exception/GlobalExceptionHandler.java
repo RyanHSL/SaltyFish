@@ -1,6 +1,6 @@
 package com.saltyFish.appointment.exception;
 
-import com.eazybytes.accounts.dto.ErrorResponseDto;
+import com.saltyFish.appointment.dto.ErrorResponseDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception,
-                                                                            WebRequest webRequest) {
+                                                                  WebRequest webRequest) {
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),
                 HttpStatus.INTERNAL_SERVER_ERROR,
