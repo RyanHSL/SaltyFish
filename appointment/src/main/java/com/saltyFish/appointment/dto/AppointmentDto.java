@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @Data
 @Schema(
         name = "Appointment",
-        description = "Schema to hold Account information"
+        description = "Schema to hold Appointment information"
 )
 public class AppointmentDto {
 
-    @NotEmpty(message = "AccountNumber can not be a null or empty")
-    @Pattern(regexp="(^$|[0-9]{10})",message = "AccountNumber must be 10 digits")
+    @NotEmpty(message = "AppointmentNumber can not be a null or empty")
+    @Pattern(regexp="(^$|[0-9]{10})",message = "AppointmentNumber must be 10 digits")
     @Schema(
             description = "Appoint Number of Salty Fish app", example = "3454433243"
     )
@@ -30,7 +30,7 @@ public class AppointmentDto {
     private String serviceType;
 
     @NotEmpty(message = "Confirmation Id can not be a null or empty")
-    @Pattern(regexp="(^$|[0-9]{8})",message = "AccountNumber must be 8 digits")
+    @Pattern(regexp="(^$|[0-9]{8})",message = "AppointmentNumber must be 8 digits")
     @Schema(
             description = "Confirmation Id", example = "12345678"
     )

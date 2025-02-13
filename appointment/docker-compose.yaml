@@ -1,10 +1,11 @@
+version: '3.7'
 services:
   postgres:
-    container_name: postgre_container
+    container_name: saltyFish_db
     image: postgres
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: saltyFish
+      POSTGRES_PASSWORD: saltyFish
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
@@ -13,6 +14,7 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
@@ -28,11 +30,50 @@ services:
       - postgres
     restart: unless-stopped
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - microservice-network
+      - postgres
+
+  configServer:
+    image: saltyFish/configserverms:latest
+    container_name: saltyFish_ConfigServer
+    ports:
+      - 8080:8080
+    depends_on:
+      - eurekaServer
+    networks:
+      - microservice-network
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaServer:8761/eureka
+
+  eurekaServer:
+    image: saltyFish/servicereg:latest
+    container_name: eurekaServer
+    ports:
+      - "8761:8761"
+    depends_on:
+      - rabbitmq
+      - zipkin
+      - postgres
+      - pgadmin
+    networks:
+      - microservice-network
+      - postgres
+
 networks:
+  microservice-network:
+    driver: bridge
   postgres:
     driver: bridge
 
 volumes:
   postgres:
-    pgadmin:
+  pgadmin:
 

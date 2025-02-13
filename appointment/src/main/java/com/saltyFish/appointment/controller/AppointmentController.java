@@ -168,7 +168,7 @@ public class AppointmentController {
     }
     )
     @DeleteMapping("/delete")
-    public ResponseEntity<ResponseDto> deleteAccountDetails(@RequestParam
+    public ResponseEntity<ResponseDto> deleteAppointmentDetails(@RequestParam
                                                                 @Pattern(regexp="(^$|[0-9]{8})",message = "confirmation Id must be 8 digits")
                                                                 String confirmationId) {
         boolean isDeleted = appointmentService.deleteAppointment(confirmationId);

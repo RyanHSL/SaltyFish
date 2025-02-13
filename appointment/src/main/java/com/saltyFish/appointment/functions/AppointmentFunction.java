@@ -15,9 +15,9 @@ public class AppointmentFunction {
 
     @Bean
     public Consumer<Long> updateCommunication(AppointmentService appointmentService) {
-        return accountNumber->{
+        return appointmentNumber->{
           log.info("Updating Communication status for the appointment id: " + appointmentService.toString());
-            appointmentService.updateCommunicationStatus(accountNumber);
+            appointmentService.updateCommunicationStatus(appointmentNumber);
         };
     }
 }
