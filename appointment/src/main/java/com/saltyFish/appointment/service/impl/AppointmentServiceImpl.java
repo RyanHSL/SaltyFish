@@ -84,14 +84,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         boolean isUpdated = false;
         if(appointmentDto != null ){
             try {
-                Appointment appointment = appointmentDAO.findById(appointmentDto.getAppointmentNumber());
+                Appointment appointment = appointmentDAO.findById(appointmentDto.getAppointmentId());
                 AppointmentMapper.mapToAppointment(appointmentDto, appointment);
                 appointmentDAO.save(appointment);
 
                 isUpdated = true;
             }
             catch (RuntimeException e) {
-                log.error("Error retrieving appointment by appointment id: {}", appointmentDto.getAppointmentNumber(), e);
+                log.error("Error retrieving appointment by appointment id: {}", appointmentDto.getAppointmentId(), e);
             }
         }
         return  isUpdated;
