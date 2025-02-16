@@ -1,6 +1,7 @@
 package com.saltyFish.appointment.dto;
 
 import com.saltyFish.appointment.entity.Appointment;
+import com.saltyFish.appointment.entity.BookingDetails;
 import com.saltyFish.appointment.lookups.ServiceType;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,8 @@ public class BookingDetailsDto {
     private boolean requesterConfirmed;
 
     private Appointment appointment;
+
+    public BookingDetailsDto(){}
 
     public BookingDetailsDto(Long serviceOwnerId, Long bookingId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId, boolean ownerConfirmed, boolean requesterConfirmed, Appointment appointment) {
         this.serviceOwnerId = serviceOwnerId;

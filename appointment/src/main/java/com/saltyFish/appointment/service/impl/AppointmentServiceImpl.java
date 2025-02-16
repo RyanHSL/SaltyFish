@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.cloud.stream.function.StreamBridge;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -36,6 +38,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         try {
             if (bookingDetails.isOwnerConfirmed() && bookingDetails.isRequesterConfirmed()) {
                 Appointment appointment = createAppointment(bookingDetails);
+                appointment.addUpdate(new AppointmentUpdate(AppointmentStatus.IN_PROGRESS, appointment));
                 if (checkAppointmentConflicts(appointment)) {
                     appointmentDAO.save(appointment);
                 }
@@ -106,7 +109,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         boolean isDeleted = false;
         try {
             Appointment appointment = appointmentDAO.findByConfirmationNumber(confirmationId);
-            appointmentDAO.deleteByConfirmationNumber(appointment.getConfirmationNumber());
+            BookingDetails bookingDetails = new BookingDetails(appointment.getServiceOwnerId(), appointment.getServiceType(), appointment.getStartTime(), appointment.getEndTime(),
+                    appointment.getConfirmationNumber(), appointment.getCommunicationSw(), appointment.getCustomerId());
+            isDeleted = deleteAppointment(BookingDetailsMapper.mapToBookingDetailsDto(bookingDetails, new BookingDetailsDto()));
         }
         catch (RuntimeException e) {
             log.error("Cannot find appointment by confirmation number: {}", confirmationId, e);
@@ -145,6 +150,27 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.addUpdate(appointmentUpdate);
 
         return appointment;
+    }
+
+    private boolean deleteAppointment(BookingDetailsDto bookingDetailsDto) {
+        Appointment appointment = appointmentDAO.findByConfirmationNumber(bookingDetailsDto.getConfirmationNumber());
+        if (bookingDetailsDto.isOwnerConfirmed() && bookingDetailsDto.isRequesterConfirmed()) {
+            appointmentDAO.delete(appointment);
+            appointment.addUpdate(new AppointmentUpdate(AppointmentStatus.CANCELLED, appointment));
+            return true;
+        }
+        else if (LocalDateTime.now().isAfter(appointment.getStartTime().minus(24, ChronoUnit.HOURS))) {
+            log.warn("Cannot cancel the appointment within 24 hrs before the start time {}, please contact the provider to manually cancel it.", appointment.getStartTime());
+            appointment.addUpdate(new AppointmentUpdate(AppointmentStatus.PENDING_APPROVAL_FROM_PROVIDER, appointment));
+            return false;
+        }
+        else if (LocalDateTime.now().isBefore(appointment.getStartTime().minus(24, ChronoUnit.HOURS))) {
+            log.info("Cancelled the appointment with confirmation number {}", appointment.getConfirmationNumber());
+            appointmentDAO.delete(appointment);
+            appointment.addUpdate(new AppointmentUpdate(AppointmentStatus.CANCELLED, appointment));
+            return true;
+        }
+        return false;
     }
 
     @Override

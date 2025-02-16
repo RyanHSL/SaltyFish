@@ -36,17 +36,14 @@ public class BookingDetails extends BaseEntity{
 
     public BookingDetails(){}
 
-    public BookingDetails(Long serviceOwnerId, Long bookingId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId, boolean ownerConfirmed, boolean requesterConfirmed) {
+    public BookingDetails(Long serviceOwnerId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId) {
         this.serviceOwnerId = serviceOwnerId;
-        this.bookingId = bookingId;
         this.serviceType = serviceType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.confirmationNumber = confirmationNumber;
         this.communicationSw = communicationSw;
         this.customerId = customerId;
-        this.ownerConfirmed = ownerConfirmed;
-        this.requesterConfirmed = requesterConfirmed;
     }
 
     public Long getServiceOwnerId() {

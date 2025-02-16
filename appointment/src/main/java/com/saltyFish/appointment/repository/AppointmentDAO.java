@@ -61,4 +61,13 @@ public class AppointmentDAO extends BaseDAO<Appointment, Long>{
         query.setParameter("startTime", startTime).setParameter("endTime", endTime);
         return query.getResultList();
     }
+
+    /**
+     * Count all appointments of current user
+     **/
+    public Integer countAppointments(Long userId) {
+        return entityManager.createQuery("SELECT COUNT(a) FROM Appointment a WHERE a.customerId = :userId", Integer.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
+    }
 }

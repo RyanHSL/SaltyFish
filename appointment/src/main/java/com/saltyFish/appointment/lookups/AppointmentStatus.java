@@ -7,8 +7,10 @@ public enum AppointmentStatus {
 
     CREATED(1, "Appointment Created"),
     IN_PROGRESS(2, "Appointment In Progress"),
-    COMPLETED(3, "Appointment Completed"),
-    CANCELLED(4, "Appointment Cancelled");
+    PENDING_APPROVAL_FROM_PROVIDER(3, "Pending Approval From The Provider"),
+    PENDING_APPROVAL_FROM_REQUESTER(4, "Pending Approval From The Requester"),
+    COMPLETED(5, "Appointment Completed"),
+    CANCELLED(6, "Appointment Cancelled");
 
     private final int id;
     private final String description;

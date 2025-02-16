@@ -1,5 +1,6 @@
 package com.saltyFish.appointment.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saltyFish.appointment.lookups.AppointmentStatus;
 import jakarta.persistence.*;
 
@@ -15,6 +16,7 @@ public class AppointmentUpdate {
 
     @ManyToOne
     @JoinColumn(name = "appointmentId", nullable = false)
+    @JsonIgnore
     private Appointment appointment;
 
     public AppointmentUpdate(AppointmentStatus appointmentStatus, Appointment appointment) {
