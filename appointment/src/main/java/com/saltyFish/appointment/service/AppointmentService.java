@@ -1,14 +1,18 @@
 package com.saltyFish.appointment.service;
 
 import com.saltyFish.appointment.dto.AppointmentDto;
+import com.saltyFish.appointment.dto.BookingDetailsDto;
+import com.saltyFish.appointment.entity.Appointment;
+import com.saltyFish.appointment.entity.BookingDetails;
 
 public interface AppointmentService {
 
     /**
      *
-     * @param appointmentDto - AppointmentDto Object
+     * @param bookingDetailsDto - Booking Details
+     * @return Appointment indicating if the appointment has been confirmed
      */
-    void bookAppointment(AppointmentDto appointmentDto);
+    AppointmentDto bookAppointment(BookingDetailsDto bookingDetailsDto);
 
     /**
      *
@@ -27,7 +31,7 @@ public interface AppointmentService {
     /**
      *
      * @param confirmationNumber - Input confirmation Number
-     * @return boolean indicating if the delete of Account details is successful or not
+     * @return boolean indicating if the delete of Appointment details is successful or not
      */
     boolean deleteAppointment(String confirmationNumber);
 

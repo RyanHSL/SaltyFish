@@ -1,10 +1,8 @@
 package com.saltyFish.appointment.controller;
 
 import com.saltyFish.appointment.constants.AppointmentConstants;
-import com.saltyFish.appointment.dto.AppointmentContactInfoDto;
-import com.saltyFish.appointment.dto.AppointmentDto;
-import com.saltyFish.appointment.dto.ErrorResponseDto;
-import com.saltyFish.appointment.dto.ResponseDto;
+import com.saltyFish.appointment.dto.*;
+import com.saltyFish.appointment.entity.BookingDetails;
 import com.saltyFish.appointment.service.AppointmentService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -76,8 +74,8 @@ public class AppointmentController {
     }
     )
     @PostMapping("/book")
-    public ResponseEntity<ResponseDto> bookAppointment(@Valid @RequestBody AppointmentDto appointmentDto) {
-        appointmentService.bookAppointment(appointmentDto);
+    public ResponseEntity<ResponseDto> bookAppointment(@Valid @RequestBody BookingDetailsDto bookingDetailsDto) {
+        appointmentService.bookAppointment(bookingDetailsDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseDto(AppointmentConstants.STATUS_201, AppointmentConstants.MESSAGE_201));

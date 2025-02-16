@@ -1,21 +1,15 @@
-package com.saltyFish.appointment.entity;
+package com.saltyFish.appointment.dto;
 
+import com.saltyFish.appointment.entity.Appointment;
 import com.saltyFish.appointment.lookups.ServiceType;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
-@Table(name = "appointment")
-public class Appointment extends BaseEntity {
+public class BookingDetailsDto {
 
     private Long serviceOwnerId;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long appointmentId;
+    private Long bookingId;
 
     private ServiceType serviceType;
 
@@ -29,30 +23,24 @@ public class Appointment extends BaseEntity {
 
     private Long customerId;
 
-    @OneToOne
-    @JoinColumn(name = "bookingId", nullable = false)
-    private BookingDetails booking;
+    private boolean ownerConfirmed;
 
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AppointmentUpdate> appointmentUpdates = new ArrayList<>();
+    private boolean requesterConfirmed;
 
-    public Appointment(){};
+    private Appointment appointment;
 
-    public Appointment(Long serviceOwnerId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId, BookingDetails booking, List<AppointmentUpdate> appointmentUpdates) {
+    public BookingDetailsDto(Long serviceOwnerId, Long bookingId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId, boolean ownerConfirmed, boolean requesterConfirmed, Appointment appointment) {
         this.serviceOwnerId = serviceOwnerId;
+        this.bookingId = bookingId;
         this.serviceType = serviceType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.confirmationNumber = confirmationNumber;
         this.communicationSw = communicationSw;
         this.customerId = customerId;
-        this.booking = booking;
-        this.appointmentUpdates = appointmentUpdates;
-    }
-
-    public void addUpdate(AppointmentUpdate update) {
-        appointmentUpdates.add(update);
-        update.setAppointment(this);
+        this.ownerConfirmed = ownerConfirmed;
+        this.requesterConfirmed = requesterConfirmed;
+        this.appointment = appointment;
     }
 
     public Long getServiceOwnerId() {
@@ -63,12 +51,12 @@ public class Appointment extends BaseEntity {
         this.serviceOwnerId = serviceOwnerId;
     }
 
-    public Long getAppointmentId() {
-        return appointmentId;
+    public Long getBookingId() {
+        return bookingId;
     }
 
-    public void setAppointmentId(Long appointmentId) {
-        this.appointmentId = appointmentId;
+    public void setBookingId(Long bookingId) {
+        this.bookingId = bookingId;
     }
 
     public ServiceType getServiceType() {
@@ -119,19 +107,27 @@ public class Appointment extends BaseEntity {
         this.customerId = customerId;
     }
 
-    public BookingDetails getBooking() {
-        return booking;
+    public boolean isOwnerConfirmed() {
+        return ownerConfirmed;
     }
 
-    public void setBooking(BookingDetails booking) {
-        this.booking = booking;
+    public void setOwnerConfirmed(boolean ownerConfirmed) {
+        this.ownerConfirmed = ownerConfirmed;
     }
 
-    public List<AppointmentUpdate> getAppointmentUpdates() {
-        return appointmentUpdates;
+    public boolean isRequesterConfirmed() {
+        return requesterConfirmed;
     }
 
-    public void setAppointmentUpdates(List<AppointmentUpdate> appointmentUpdates) {
-        this.appointmentUpdates = appointmentUpdates;
+    public void setRequesterConfirmed(boolean requesterConfirmed) {
+        this.requesterConfirmed = requesterConfirmed;
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 }

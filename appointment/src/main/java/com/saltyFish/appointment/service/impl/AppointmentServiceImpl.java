@@ -1,19 +1,21 @@
 package com.saltyFish.appointment.service.impl;
 
 import com.saltyFish.appointment.dto.AppointmentDto;
+import com.saltyFish.appointment.dto.BookingDetailsDto;
 import com.saltyFish.appointment.entity.Appointment;
-import com.saltyFish.appointment.exception.ResourceNotFoundException;
+import com.saltyFish.appointment.entity.AppointmentUpdate;
+import com.saltyFish.appointment.entity.BookingDetails;
 import com.saltyFish.appointment.mapper.AppointmentMapper;
+import com.saltyFish.appointment.lookups.AppointmentStatus;
+import com.saltyFish.appointment.mapper.BookingDetailsMapper;
 import com.saltyFish.appointment.repository.AppointmentDAO;
 import com.saltyFish.appointment.service.AppointmentService;
-import jakarta.persistence.PersistenceException;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.cloud.stream.function.StreamBridge;
 
-import java.rmi.NotBoundException;
 import java.util.List;
 
 @Service
@@ -26,23 +28,27 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final StreamBridge streamBridge;
 
     /**
-     * @param appointmentDto - AppointmentDto Object
+     * @param bookingDetailsDto - BookingDetailsDto Object
      */
     @Override
-    public void bookAppointment(AppointmentDto appointmentDto) {
-        Appointment appointment = AppointmentMapper.mapToAppointment(appointmentDto, new Appointment());
+    public AppointmentDto bookAppointment(BookingDetailsDto bookingDetailsDto) {
+        BookingDetails bookingDetails = BookingDetailsMapper.mapToBookingDetails(bookingDetailsDto, new BookingDetails());
         try {
-            List<Appointment> existingAppointments = appointmentDAO.findAllAppointmentWithInThisTime(appointmentDto.getStartTime(), appointment.getEndTime());
-            if (existingAppointments.isEmpty()) {
-                appointmentDAO.save(appointment);
-            }
-            else {
-                log.warn("This appointment has conflicts within this time period {} {}", appointmentDto.getStartTime(), appointment.getEndTime());
+            if (bookingDetails.isOwnerConfirmed() && bookingDetails.isRequesterConfirmed()) {
+                Appointment appointment = createAppointment(bookingDetails);
+                if (checkAppointmentConflicts(appointment)) {
+                    appointmentDAO.save(appointment);
+                }
+                else {
+                    log.warn("This appointment has conflicts within this time period {} {}", bookingDetails.getStartTime(), bookingDetails.getEndTime());
+                }
+                return AppointmentMapper.mapToAppointmentDto(appointment, new AppointmentDto());
             }
         }
         catch (RuntimeException e) {
-            log.error("Error finding available appointments within the time period {} {}", appointmentDto.getStartTime(), appointment.getEndTime(), e);
+            log.error("Error finding available appointments within the time period {} {}", bookingDetails.getStartTime(), bookingDetails.getEndTime(), e);
         }
+        return null;
     }
 
 //    private void sendCommunication(Appointment appointment, Customer customer) {
@@ -106,6 +112,39 @@ public class AppointmentServiceImpl implements AppointmentService {
             log.error("Cannot find appointment by confirmation number: {}", confirmationId, e);
         }
         return isDeleted;
+    }
+
+    private boolean checkAppointmentConflicts(Appointment appointment) {
+        try {
+            List<Appointment> existingAppointments = appointmentDAO.findAllAppointmentWithInThisTime(appointment.getStartTime(), appointment.getEndTime());
+            if (existingAppointments.isEmpty()) {
+                return false;
+            }
+            else {
+                log.warn("This appointment has conflicts within this time period {} {}", appointment.getStartTime(), appointment.getEndTime());
+                return true;
+            }
+        }
+        catch (RuntimeException e) {
+            log.error("Error finding available appointments within the time period {} {}", appointment.getStartTime(), appointment.getEndTime(), e);
+            return false;
+        }
+    }
+
+    private Appointment createAppointment(BookingDetails bookingDetails) {
+        Appointment appointment = new Appointment();
+        appointment.setBooking(bookingDetails);
+        appointment.setConfirmationNumber(bookingDetails.getConfirmationNumber());
+        appointment.setCommunicationSw(bookingDetails.getCommunicationSw());
+        appointment.setCustomerId(bookingDetails.getCustomerId());
+        appointment.setServiceOwnerId(bookingDetails.getServiceOwnerId());
+        appointment.setStartTime(bookingDetails.getStartTime());
+        appointment.setEndTime(bookingDetails.getEndTime());
+        appointment.setServiceType(bookingDetails.getServiceType());
+        AppointmentUpdate appointmentUpdate = new AppointmentUpdate(AppointmentStatus.CREATED, appointment);
+        appointment.addUpdate(appointmentUpdate);
+
+        return appointment;
     }
 
     @Override

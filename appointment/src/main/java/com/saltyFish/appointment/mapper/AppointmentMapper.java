@@ -6,9 +6,9 @@ import com.saltyFish.appointment.entity.Appointment;
 public class AppointmentMapper {
 
     public static AppointmentDto mapToAppointmentDto(Appointment appointment, AppointmentDto appointmentDto) {
-        appointmentDto.setAppointmentNumber(appointment.getAppointmentNumber());
+        appointmentDto.setAppointmentId(appointment.getAppointmentId());
         appointmentDto.setServiceType(appointment.getServiceType());
-        appointmentDto.setConfirmationId(appointment.getConfirmationId());
+        appointmentDto.setConfirmationNumber(appointment.getConfirmationNumber());
         appointmentDto.setServiceType(appointment.getServiceType());
         appointmentDto.setStartTime(appointment.getStartTime());
         appointmentDto.setEndTime(appointment.getEndTime());
@@ -16,9 +16,9 @@ public class AppointmentMapper {
     }
 
     public static Appointment mapToAppointment(AppointmentDto appointmentDto, Appointment appointment) {
-        appointment.setAppointmentNumber(appointmentDto.getAppointmentNumber());
+        appointment.setAppointmentId(appointmentDto.getAppointmentId());
         appointment.setServiceType(appointmentDto.getServiceType());
-        appointment.setConfirmationId(appointmentDto.getConfirmationId());
+        appointment.setConfirmationNumber(appointmentDto.getConfirmationNumber());
         appointment.setServiceType(appointmentDto.getServiceType());
         appointment.setStartTime(appointmentDto.getStartTime());
         appointment.setEndTime(appointmentDto.getEndTime());

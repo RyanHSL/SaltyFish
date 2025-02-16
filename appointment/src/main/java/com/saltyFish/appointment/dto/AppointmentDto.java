@@ -1,5 +1,6 @@
 package com.saltyFish.appointment.dto;
 
+import com.saltyFish.appointment.lookups.ServiceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
@@ -21,20 +22,20 @@ public class AppointmentDto {
     @Schema(
             description = "Appoint Number of Salty Fish app", example = "3454433243"
     )
-    private Long appointmentNumber;
+    private Long appointmentId;
 
     @NotEmpty(message = "Service Type can not be a null or empty")
     @Schema(
             description = "Service type of Salty Fish app", example = "Makeup"
     )
-    private String serviceType;
+    private ServiceType serviceType;
 
     @NotEmpty(message = "Confirmation Id can not be a null or empty")
     @Pattern(regexp="(^$|[0-9]{8})",message = "AppointmentNumber must be 8 digits")
     @Schema(
             description = "Confirmation Id", example = "12345678"
     )
-    private String confirmationId;
+    private String confirmationNumber;
 
     @NotEmpty(message = "Start Time can not be a null or empty")
     @Schema(
