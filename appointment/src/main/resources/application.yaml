@@ -23,8 +23,8 @@ spring:
   # PostgreSQL
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
-    username: saltyFish
-    password: saltyFish
+    username:
+    password:
   jpa:
     database: POSTGRESQL
     hibernate:

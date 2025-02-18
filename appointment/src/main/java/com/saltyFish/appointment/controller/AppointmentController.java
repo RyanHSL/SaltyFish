@@ -2,6 +2,7 @@ package com.saltyFish.appointment.controller;
 
 import com.saltyFish.appointment.constants.AppointmentConstants;
 import com.saltyFish.appointment.dto.*;
+import com.saltyFish.appointment.entity.Appointment;
 import com.saltyFish.appointment.entity.BookingDetails;
 import com.saltyFish.appointment.service.AppointmentService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Ryan Hershel
@@ -100,11 +104,46 @@ public class AppointmentController {
     }
     )
     @GetMapping("/fetch")
-    public ResponseEntity<AppointmentDto> fetchAppointmentDetails(@RequestParam
+    public ResponseEntity<AppointmentDto> fetchAppointmentDetails(@RequestParam(name = "confirmationId")
                                                                @Pattern(regexp="(^$|[0-9]{8})",message = "confirmation Id must be 8 digits")
-                                                               String confirmationId) {
+                                                               String confirmationId,
+                                                                  @RequestParam(name = "pageNumber") Integer pageNumber,
+                                                                  @RequestParam(name = "pageSize") Integer pageSize) {
         AppointmentDto appointmentDto = appointmentService.fetchAppointment(confirmationId);
         return ResponseEntity.status(HttpStatus.OK).body(appointmentDto);
+    }
+
+    @Operation(
+            summary = "Get all appointments for the user",
+            description = "REST API to get Appointment details based on the current user id"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "417",
+                    description = "Expectation Failed"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/fetch/{userId}")
+    public ResponseEntity<List<AppointmentDto>> fetchAllUserAppointments(@PathVariable Long userId,
+                                                                         @RequestParam(name = "pageNumber") Integer pageNumber,
+                                                                         @RequestParam(name = "pageSize") Integer pageSize) {
+        List<AppointmentDto> appointments = appointmentService.fetchUserAppointments(userId, pageNumber, pageSize);
+        if (appointments == null || appointments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(appointments);
     }
 
     @Operation(

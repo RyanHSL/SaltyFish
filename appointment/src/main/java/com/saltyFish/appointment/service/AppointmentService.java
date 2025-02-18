@@ -5,6 +5,8 @@ import com.saltyFish.appointment.dto.BookingDetailsDto;
 import com.saltyFish.appointment.entity.Appointment;
 import com.saltyFish.appointment.entity.BookingDetails;
 
+import java.util.List;
+
 public interface AppointmentService {
 
     /**
@@ -13,6 +15,13 @@ public interface AppointmentService {
      * @return Appointment indicating if the appointment has been confirmed
      */
     AppointmentDto bookAppointment(BookingDetailsDto bookingDetailsDto);
+
+    /**
+     *
+     * @param userId - Input User ID
+     * @return Appointment Details based on a given userId
+     */
+    List<AppointmentDto> fetchUserAppointments(Long userId, Integer pageNumber, Integer pageSize);
 
     /**
      *

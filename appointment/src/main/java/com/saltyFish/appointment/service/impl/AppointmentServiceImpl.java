@@ -13,12 +13,16 @@ import com.saltyFish.appointment.service.AppointmentService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.cloud.stream.function.StreamBridge;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -76,6 +80,18 @@ public class AppointmentServiceImpl implements AppointmentService {
             log.error("Error retrieving appointment by confirmation number: {}", confirmationId, e);
             return new AppointmentDto();
         }
+    }
+
+    /**
+     * @param userId - Input user Id
+     * @return appointment Details based on a given user id
+     */
+    @Override
+    public List<AppointmentDto> fetchUserAppointments(Long userId, Integer pageNumber, Integer pageSize) {
+        List<Appointment> appointmentPage = appointmentDAO.findByCustomerIdPageable(userId, pageNumber, pageSize);
+        return appointmentPage.stream().
+                map(appintment -> AppointmentMapper.mapToAppointmentDto(appintment, new AppointmentDto()))
+                .collect(Collectors.toList());
     }
 
     /**

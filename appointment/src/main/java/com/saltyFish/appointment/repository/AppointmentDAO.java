@@ -33,6 +33,17 @@ public class AppointmentDAO extends BaseDAO<Appointment, Long>{
     }
 
     /**
+     *
+     */
+    public List<Appointment> findByCustomerIdPageable(Long customerId, Integer pageNumber, Integer pageSize) {
+        TypedQuery<Appointment> query = entityManager.createQuery("SELECT a FROM Appointment a WHERE customerId = :customerId", Appointment.class);
+        query.setParameter("customerId", customerId);
+        return query.setFirstResult(pageNumber * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    /**
      * Find appointment by confirmation number
     **/
     public Appointment findByConfirmationNumber(String confirmationNumber) {
