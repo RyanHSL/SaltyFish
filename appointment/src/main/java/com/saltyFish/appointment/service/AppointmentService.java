@@ -44,5 +44,12 @@ public interface AppointmentService {
      */
     boolean deleteAppointment(String confirmationNumber);
 
+    /**
+     *
+     * @param userId - Input user id
+     * @return boolean indicating if the delete of Appointment details is successful or not
+     */
+    Integer countUserAppointments(Long userId);
+
     boolean updateCommunicationStatus(Long appointmentId);
 }

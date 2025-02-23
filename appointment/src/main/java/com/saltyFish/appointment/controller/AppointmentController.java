@@ -2,8 +2,7 @@ package com.saltyFish.appointment.controller;
 
 import com.saltyFish.appointment.constants.AppointmentConstants;
 import com.saltyFish.appointment.dto.*;
-import com.saltyFish.appointment.entity.Appointment;
-import com.saltyFish.appointment.entity.BookingDetails;
+import com.saltyFish.appointment.lookups.AppointmentStatus;
 import com.saltyFish.appointment.service.AppointmentService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,11 +76,11 @@ public class AppointmentController {
     }
     )
     @PostMapping("/book")
-    public ResponseEntity<ResponseDto> bookAppointment(@Valid @RequestBody BookingDetailsDto bookingDetailsDto) {
-        appointmentService.bookAppointment(bookingDetailsDto);
+    public ResponseEntity<APIResponse> bookAppointment(@Valid @RequestBody BookingDetailsDto bookingDetailsDto) {
+        AppointmentDto appointment = appointmentService.bookAppointment(bookingDetailsDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseDto(AppointmentConstants.STATUS_201, AppointmentConstants.MESSAGE_201));
+                .body(new APIResponse(AppointmentConstants.STATUS_201, AppointmentConstants.MESSAGE_201, appointment));
     }
 
     @Operation(
@@ -136,14 +134,18 @@ public class AppointmentController {
     }
     )
     @GetMapping("/fetch/{userId}")
-    public ResponseEntity<List<AppointmentDto>> fetchAllUserAppointments(@PathVariable Long userId,
+    public ResponseEntity<APIResponse> fetchAllUserAppointments(@PathVariable Long userId,
                                                                          @RequestParam(name = "pageNumber") Integer pageNumber,
                                                                          @RequestParam(name = "pageSize") Integer pageSize) {
         List<AppointmentDto> appointments = appointmentService.fetchUserAppointments(userId, pageNumber, pageSize);
         if (appointments == null || appointments.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(appointments);
+        Integer totalElement = appointmentService.countUserAppointments(userId);
+        Integer totalPage = totalElement / pageSize;
+        boolean isLastPage = (pageNumber + 1) >= totalPage;
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, pageNumber, pageNumber, pageSize, totalElement, totalPage, isLastPage));
     }
 
     @Operation(
@@ -169,16 +171,16 @@ public class AppointmentController {
     }
     )
     @PutMapping("/update")
-    public ResponseEntity<ResponseDto> updateAppointmentDetails(@Valid @RequestBody AppointmentDto appointmentDto) {
+    public ResponseEntity<APIResponse> updateAppointmentDetails(@Valid @RequestBody AppointmentDto appointmentDto) {
         boolean isUpdated = appointmentService.updateAppointment(appointmentDto);
         if(isUpdated) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDto(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200));
+                    .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200));
         }else{
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(AppointmentConstants.STATUS_417,AppointmentConstants.MESSAGE_417_UPDATE));
+                    .body(new APIResponse(AppointmentConstants.STATUS_417,AppointmentConstants.MESSAGE_417_UPDATE));
         }
     }
 
@@ -205,18 +207,18 @@ public class AppointmentController {
     }
     )
     @DeleteMapping("/delete")
-    public ResponseEntity<ResponseDto> deleteAppointmentDetails(@RequestParam
+    public ResponseEntity<APIResponse> deleteAppointmentDetails(@RequestParam
                                                                 @Pattern(regexp="(^$|[0-9]{8})",message = "confirmation Id must be 8 digits")
                                                                 String confirmationId) {
         boolean isDeleted = appointmentService.deleteAppointment(confirmationId);
         if(isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDto(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200));
+                    .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200));
         }else{
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(AppointmentConstants.STATUS_417, AppointmentConstants.MESSAGE_417_DELETE));
+                    .body(new APIResponse(AppointmentConstants.STATUS_417, AppointmentConstants.MESSAGE_417_DELETE));
         }
     }
 

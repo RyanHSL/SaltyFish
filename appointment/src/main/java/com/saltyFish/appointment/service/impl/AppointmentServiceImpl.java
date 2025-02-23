@@ -1,5 +1,6 @@
 package com.saltyFish.appointment.service.impl;
 
+import com.saltyFish.appointment.dto.APIResponse;
 import com.saltyFish.appointment.dto.AppointmentDto;
 import com.saltyFish.appointment.dto.BookingDetailsDto;
 import com.saltyFish.appointment.entity.Appointment;
@@ -90,9 +91,19 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<AppointmentDto> fetchUserAppointments(Long userId, Integer pageNumber, Integer pageSize) {
         List<Appointment> appointmentPage = appointmentDAO.findByCustomerIdPageable(userId, pageNumber, pageSize);
         return appointmentPage.stream().
-                map(appintment -> AppointmentMapper.mapToAppointmentDto(appintment, new AppointmentDto()))
-                .collect(Collectors.toList());
+            map(appintment -> AppointmentMapper.mapToAppointmentDto(appintment, new AppointmentDto()))
+            .collect(Collectors.toList());
     }
+
+    /**
+     * @param userId - Input user Id
+     * @return number of appointments of current user
+     */
+    @Override
+    public Integer countUserAppointments(Long userId) {
+        return appointmentDAO.countAppointments(userId);
+    }
+
 
     /**
      * @param appointmentDto - AppointmentDto Object
