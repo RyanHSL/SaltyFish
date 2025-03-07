@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.saltyFish</groupId>
-	<artifactId>service</artifactId>
+	<artifactId>personalService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>service</name>
 	<description>Listing MS of Salty Fish</description>
