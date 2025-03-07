@@ -286,30 +286,30 @@ public class AppointmentController {
                 .body("Java 17");
     }
 
-//    @Operation(
-//            summary = "Get Contact Info",
-//            description = "Contact Info details that can be reached out in case of any issues"
-//    )
-//    @ApiResponses({
-//            @ApiResponse(
-//                    responseCode = "200",
-//                    description = "HTTP Status OK"
-//            ),
-//            @ApiResponse(
-//                    responseCode = "500",
-//                    description = "HTTP Status Internal Server Error",
-//                    content = @Content(
-//                            schema = @Schema(implementation = ErrorResponseDto.class)
-//                    )
-//            )
-//    }
-//    )
-//    @GetMapping("/contact-info")
-//    public ResponseEntity<AppointmentContactInfoDto> getContactInfo() {
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(appointmentContactInfoDto);
-//    }
+    @Operation(
+            summary = "Get Contact Info",
+            description = "Contact Info details that can be reached out in case of any issues"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/contact-info")
+    public ResponseEntity<AppointmentContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(appointmentContactInfoDto);
+    }
 
 
 }

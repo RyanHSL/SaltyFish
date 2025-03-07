@@ -175,7 +175,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setServiceOwnerId(bookingDetails.getServiceOwnerId());
         appointment.setStartTime(bookingDetails.getStartTime());
         appointment.setEndTime(bookingDetails.getEndTime());
-//        appointment.setServiceType(bookingDetails.getServiceType());
+        appointment.setServiceType(bookingDetails.getServiceType());
         AppointmentUpdate appointmentUpdate = new AppointmentUpdate(AppointmentStatus.CREATED, appointment);
         appointment.addUpdate(appointmentUpdate);
 

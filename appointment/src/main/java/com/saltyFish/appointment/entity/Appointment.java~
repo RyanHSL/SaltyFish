@@ -42,10 +42,10 @@ public class Appointment extends BaseEntity {
     @JoinColumn(name = "bookingDetailsId", nullable = false)
     private BookingDetails booking;
 
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "appointmentId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentUpdate> appointmentUpdates = new ArrayList<>();
 
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "appointmentId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FollowUpActivity> followUpActivities = new ArrayList<>();
 
     public Appointment(){};

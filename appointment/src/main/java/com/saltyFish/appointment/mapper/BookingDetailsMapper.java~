@@ -1,6 +1,8 @@
 package com.saltyFish.appointment.mapper;
 
+import com.saltyFish.appointment.dto.AppointmentDto;
 import com.saltyFish.appointment.dto.BookingDetailsDto;
+import com.saltyFish.appointment.entity.Appointment;
 import com.saltyFish.appointment.entity.BookingDetails;
 
 public class BookingDetailsMapper {

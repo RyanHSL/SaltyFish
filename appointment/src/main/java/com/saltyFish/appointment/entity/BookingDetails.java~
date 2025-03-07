@@ -1,15 +1,19 @@
-package com.saltyFish.appointment.dto;
+package com.saltyFish.appointment.entity;
 
-import com.saltyFish.appointment.entity.Appointment;
-import com.saltyFish.appointment.entity.BookingDetails;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saltyFish.appointment.lookups.ServiceType;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-public class BookingDetailsDto {
+@Entity
+@Table(name = "bookingDetails")
+public class BookingDetails extends BaseEntity{
 
     private Long serviceOwnerId;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
 
     private ServiceType serviceType;
@@ -28,19 +32,16 @@ public class BookingDetailsDto {
 
     private boolean requesterConfirmed;
 
-    public BookingDetailsDto(){}
+    public BookingDetails(){}
 
-    public BookingDetailsDto(Long serviceOwnerId, Long bookingId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId, boolean ownerConfirmed, boolean requesterConfirmed) {
+    public BookingDetails(Long serviceOwnerId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId) {
         this.serviceOwnerId = serviceOwnerId;
-        this.bookingId = bookingId;
         this.serviceType = serviceType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.confirmationNumber = confirmationNumber;
         this.communicationSw = communicationSw;
         this.customerId = customerId;
-        this.ownerConfirmed = ownerConfirmed;
-        this.requesterConfirmed = requesterConfirmed;
     }
 
     public Long getServiceOwnerId() {
@@ -123,4 +124,15 @@ public class BookingDetailsDto {
         this.requesterConfirmed = requesterConfirmed;
     }
 
+    public boolean isConfirmed() {
+        return ownerConfirmed && requesterConfirmed;
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
+    }
 }

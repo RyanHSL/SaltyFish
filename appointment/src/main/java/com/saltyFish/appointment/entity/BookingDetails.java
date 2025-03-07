@@ -1,5 +1,6 @@
 package com.saltyFish.appointment.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saltyFish.appointment.lookups.ServiceType;
 import jakarta.persistence.*;
 
@@ -30,9 +31,6 @@ public class BookingDetails extends BaseEntity{
     private boolean ownerConfirmed;
 
     private boolean requesterConfirmed;
-
-    @OneToOne(mappedBy = "bookingDetails", cascade = CascadeType.ALL)
-    private Appointment appointment;
 
     public BookingDetails(){}
 
@@ -128,13 +126,5 @@ public class BookingDetails extends BaseEntity{
 
     public boolean isConfirmed() {
         return ownerConfirmed && requesterConfirmed;
-    }
-
-    public Appointment getAppointment() {
-        return appointment;
-    }
-
-    public void setAppointment(Appointment appointment) {
-        this.appointment = appointment;
     }
 }

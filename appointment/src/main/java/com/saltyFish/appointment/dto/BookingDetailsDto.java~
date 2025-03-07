@@ -28,6 +28,8 @@ public class BookingDetailsDto {
 
     private boolean requesterConfirmed;
 
+//    private Appointment appointment;
+
     public BookingDetailsDto(){}
 
     public BookingDetailsDto(Long serviceOwnerId, Long bookingId, ServiceType serviceType, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId, boolean ownerConfirmed, boolean requesterConfirmed) {

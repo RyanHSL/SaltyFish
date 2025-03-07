@@ -31,17 +31,17 @@ spring:
       ddl-auto: update
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-#  config:
-#    import: "optional:configserver:http://localhost:8071/"
-#  cloud:
-#    kubernetes:
-#      discovery:
-#        all-namespaces: true
-#    openfeign:
-#      circuitbreaker:
-#        enabled: true
-#    functions:
-#      definition: updateCommunication
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: true
+    openfeign:
+      circuitbreaker:
+        enabled: true
+    functions:
+      definition: updateCommunication
 #    stream:
 #      bindings:
 #        updateCommunication-in-0:
