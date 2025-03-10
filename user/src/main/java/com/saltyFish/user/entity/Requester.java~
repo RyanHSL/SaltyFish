@@ -1,0 +1,33 @@
+package com.saltyFish.user.entity;
+
+import com.saltyFish.user.lookups.Role;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "requester")
+public class Requester extends User {
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "role")
+    private Role role;
+
+    private List<Long> requestsHistory = new ArrayList<>();
+    private List<Long> servicesHistory = new ArrayList<>();
+
+    public Requester(String username, String password, String email) {
+        super(username, password, email);
+        this.role = Role.REQUESTER;
+    }
+
+    public Requester(String username, String password, String email, boolean isMember, boolean isActive, LocalDateTime expiryDate, LocalDateTime startDate, Integer level) {
+        super(username, password, email, isMember, isActive, expiryDate, startDate, level);
+        if (isMember) {
+            this.role = Role.MEMBERED_REQUESTER;
+        }
+    }
+}

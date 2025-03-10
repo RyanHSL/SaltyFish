@@ -1,0 +1,9 @@
+package com.saltyFish.user.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "memberedProvider")
+public class MemberedProvider extends Provider {
+}

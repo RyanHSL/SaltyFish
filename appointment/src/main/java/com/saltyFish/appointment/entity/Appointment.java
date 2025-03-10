@@ -1,9 +1,12 @@
 package com.saltyFish.appointment.entity;
 
+import com.saltyFish.appointment.lookups.CancellationReason;
 import com.saltyFish.appointment.lookups.ServiceType;
 import jakarta.persistence.*;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Book;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,17 @@ public class Appointment extends BaseEntity {
 
     private Long serviceId;
 
+    private LocalDateTime cancelDateTime;
+
+    private Long cancelledBy;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "cancelReason", nullable = true)
+    private CancellationReason cancelReason;
+
+    @Transient
+    private Duration duration;
+
     @OneToMany
     @JoinColumn(name = "appointmentId", nullable = false)
     private List<BookingDetails> bookingDetails = new ArrayList<>();
@@ -50,8 +64,11 @@ public class Appointment extends BaseEntity {
 
     public Appointment(){};
 
-    public Appointment(Long serviceOwnerId, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId, boolean isCompleted, boolean isCancelled, Long serviceId, List<BookingDetails> bookingDetails, BookingDetails booking, List<AppointmentUpdate> appointmentUpdates, List<FollowUpActivity> followUpActivities) {
+    public Appointment(Long serviceOwnerId, Long appointmentId, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId,
+                       boolean isCompleted, boolean isCancelled, Long serviceId, LocalDateTime cancelDateTime, Long cancelledBy, CancellationReason cancelReason,
+                       List<BookingDetails> bookingDetails, BookingDetails booking, List<AppointmentUpdate> appointmentUpdates, List<FollowUpActivity> followUpActivities) {
         this.serviceOwnerId = serviceOwnerId;
+        this.appointmentId = appointmentId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.confirmationNumber = confirmationNumber;
@@ -60,6 +77,12 @@ public class Appointment extends BaseEntity {
         this.isCompleted = isCompleted;
         this.isCancelled = isCancelled;
         this.serviceId = serviceId;
+        this.cancelDateTime = cancelDateTime;
+        this.cancelledBy = cancelledBy;
+        this.cancelReason = cancelReason;
+        if (startTime != null && endTime != null) {
+            this.duration = Duration.between(startTime, endTime);
+        }
         this.bookingDetails = bookingDetails;
         this.booking = booking;
         this.appointmentUpdates = appointmentUpdates;
@@ -181,5 +204,37 @@ public class Appointment extends BaseEntity {
 
     public void setFollowUpActivities(List<FollowUpActivity> followUpActivities) {
         this.followUpActivities = followUpActivities;
+    }
+
+    public LocalDateTime getCancelDateTime() {
+        return cancelDateTime;
+    }
+
+    public void setCancelDateTime(LocalDateTime cancelDateTime) {
+        this.cancelDateTime = cancelDateTime;
+    }
+
+    public Long getCancelledBy() {
+        return cancelledBy;
+    }
+
+    public void setCancelledBy(Long cancelledBy) {
+        this.cancelledBy = cancelledBy;
+    }
+
+    public CancellationReason getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(CancellationReason cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 }
