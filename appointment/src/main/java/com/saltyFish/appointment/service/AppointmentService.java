@@ -4,6 +4,7 @@ import com.saltyFish.appointment.dto.AppointmentDto;
 import com.saltyFish.appointment.dto.BookingDetailsDto;
 import com.saltyFish.appointment.entity.Appointment;
 import com.saltyFish.appointment.entity.BookingDetails;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface AppointmentService {
      * @param userId - Input User ID
      * @return Appointment Details based on a given userId
      */
-    List<AppointmentDto> fetchUserAppointments(Long userId, Integer pageNumber, Integer pageSize);
+    Page<AppointmentDto> fetchUserAppointments(Long userId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     /**
      *

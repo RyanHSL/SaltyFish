@@ -40,6 +40,7 @@ public class AppointmentDAO extends BaseDAO<Appointment, Long>{
      * Find appointment by customer id with pagination and sorting
      **/
     public Page<Appointment> findByCustomerIdPageable(Long customerId, Pageable pageable) {
+//        Sort sort = ascending ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         TypedQuery<Appointment> query = entityManager.createQuery("SELECT a FROM Appointment a WHERE customerId = :customerId ORDER BY a." + pageable.getSort().toString().replace(": ", " "), Appointment.class);
         query.setParameter("customerId", customerId);
         query.setMaxResults(pageable.getPageSize());

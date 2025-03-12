@@ -1,5 +1,6 @@
 package com.saltyFish.appointment.controller;
 
+import com.saltyFish.appointment.constants.AppConstants;
 import com.saltyFish.appointment.constants.AppointmentConstants;
 import com.saltyFish.appointment.dto.*;
 import com.saltyFish.appointment.lookups.AppointmentStatus;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -133,9 +135,11 @@ public class AppointmentController {
     )
     @GetMapping("/fetch/{userId}")
     public ResponseEntity<APIResponse> fetchAllUserAppointments(@PathVariable Long userId,
-                                                                         @RequestParam(name = "pageNumber") Integer pageNumber,
-                                                                         @RequestParam(name = "pageSize") Integer pageSize) {
-        List<AppointmentDto> appointments = appointmentService.fetchUserAppointments(userId, pageNumber, pageSize);
+                                                                         @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                                         @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                                         @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY) String sortBy,
+                                                                         @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER) String sortOrder) {
+        Page<AppointmentDto> appointments = appointmentService.fetchUserAppointments(userId, pageNumber, pageSize, sortBy, sortOrder);
         if (appointments == null || appointments.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -143,7 +147,7 @@ public class AppointmentController {
         Integer totalPage = totalElement / pageSize;
         boolean isLastPage = (pageNumber + 1) >= totalPage;
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, pageNumber, pageNumber, pageSize, totalElement, totalPage, isLastPage));
+                .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, appointments.getContent(), appointments.getNumber(), appointments.getSize(), appointments.getTotalElements(), appointments.getTotalPages(), appointments.isLast()));
     }
 
     @Operation(

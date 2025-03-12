@@ -24,7 +24,7 @@ public class APIResponse<T> {
     private T content;
     private Integer pageNumber;
     private Integer pageSize;
-    private Long totalElements;
+    private Integer totalElements;
     private Integer totalPages;
     private boolean lastPage;
 
