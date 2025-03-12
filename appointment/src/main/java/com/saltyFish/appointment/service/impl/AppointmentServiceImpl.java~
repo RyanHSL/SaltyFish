@@ -96,8 +96,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         Sort sort = sortOrder == "asc" ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Appointment> appointmentPage = appointmentDAO.findByCustomerIdPageable(userId, pageable);
-        return appointmentPage.
+        Page<AppointmentDto> appointmentDtoPage = appointmentPage.
             map(appointment -> AppointmentMapper.mapToAppointmentDto(appointment, new AppointmentDto()));
+        return appointmentDtoPage;
     }
 
     /**

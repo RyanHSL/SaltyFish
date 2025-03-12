@@ -38,7 +38,7 @@ import java.util.List;
         description = "CRUD REST APIs in SaltyFish to CREATE, UPDATE, FETCH AND DELETE appointment details"
 )
 @RestController
-@RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path="/api/v1/appointments", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class AppointmentController {
 
@@ -147,7 +147,7 @@ public class AppointmentController {
         Integer totalPage = totalElement / pageSize;
         boolean isLastPage = (pageNumber + 1) >= totalPage;
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, appointments.getNumber(), appointments.getSize(), appointments.getTotalElements(), appointments.getTotalElements(), appointments.getTotalPages(), appointments.isLast()));
+                .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, appointments.getContent(), appointments.getNumber(), appointments.getSize(), appointments.getTotalElements(), appointments.getTotalPages(), appointments.isLast()));
     }
 
     @Operation(

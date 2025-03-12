@@ -93,7 +93,7 @@ public class AppointmentServiceImpl implements AppointmentService {
      */
     @Override
     public Page<AppointmentDto> fetchUserAppointments(Long userId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        Sort sort = sortOrder == "asc" ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Appointment> appointmentPage = appointmentDAO.findByCustomerIdPageable(userId, pageable);
         Page<AppointmentDto> appointmentDtoPage = appointmentPage.

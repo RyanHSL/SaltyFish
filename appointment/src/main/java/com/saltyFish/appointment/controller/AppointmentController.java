@@ -38,7 +38,7 @@ import java.util.List;
         description = "CRUD REST APIs in SaltyFish to CREATE, UPDATE, FETCH AND DELETE appointment details"
 )
 @RestController
-@RequestMapping(path="/api", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path="/api/v1/appointment", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class AppointmentController {
 
