@@ -1,0 +1,14 @@
+package com.saltyFish.user.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "userProfile")
+public class UserProfile {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long userProfileId;
+
+    @
+}

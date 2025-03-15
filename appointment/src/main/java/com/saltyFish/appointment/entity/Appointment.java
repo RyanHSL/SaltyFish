@@ -162,6 +162,9 @@ public class Appointment extends BaseEntity {
     }
 
     public void setAppointmentUpdates(List<AppointmentUpdate> appointmentUpdates) {
+        for (AppointmentUpdate update : appointmentUpdates) {
+            update.setAppointment(this);
+        }
         this.appointmentUpdates = appointmentUpdates;
     }
 
@@ -194,6 +197,9 @@ public class Appointment extends BaseEntity {
     }
 
     public void setFollowUpActivities(List<FollowUpActivity> followUpActivities) {
+        for (FollowUpActivity followUpActivity : followUpActivities) {
+            followUpActivity.setAppointment(this);
+        }
         this.followUpActivities = followUpActivities;
     }
 

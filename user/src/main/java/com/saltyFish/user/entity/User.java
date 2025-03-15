@@ -1,10 +1,14 @@
 package com.saltyFish.user.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User {
+public abstract class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +18,7 @@ public abstract class User {
 
     private String password;
 
+    @Email
     private String email;
 
     private String firstName;
@@ -22,10 +27,20 @@ public abstract class User {
 
     private String phoneNumber;
 
-    public User(String username, String password, String email) {
+    private Set<Long> addresses = new HashSet<>();
+
+    private Boolean isMember;
+
+    public User(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses, Boolean isMember) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.addresses = addresses;
+        this.isMember = isMember;
     }
 
     public Long getUserId() {
@@ -52,11 +67,11 @@ public abstract class User {
         this.password = password;
     }
 
-    public String getEmail() {
+    public @Email String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(@Email String email) {
         this.email = email;
     }
 
@@ -82,5 +97,21 @@ public abstract class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Set<Long> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<Long> addresses) {
+        this.addresses = addresses;
+    }
+
+    public Boolean getMember() {
+        return isMember;
+    }
+
+    public void setMember(Boolean member) {
+        isMember = member;
     }
 }

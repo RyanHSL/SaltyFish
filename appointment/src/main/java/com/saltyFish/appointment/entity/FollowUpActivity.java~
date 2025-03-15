@@ -16,8 +16,6 @@ public class FollowUpActivity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long followUpActivityId;
 
-    private ServiceType serviceType;
-
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
@@ -38,4 +36,6 @@ public class FollowUpActivity {
     @JoinColumn(name = "appointmentId", nullable = false)
     @JsonIgnore
     private Appointment appointment;
+
+
 }

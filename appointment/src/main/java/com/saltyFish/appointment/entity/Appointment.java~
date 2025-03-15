@@ -66,7 +66,7 @@ public class Appointment extends BaseEntity {
 
     public Appointment(Long serviceOwnerId, Long appointmentId, LocalDateTime startTime, LocalDateTime endTime, String confirmationNumber, Boolean communicationSw, Long customerId,
                        boolean isCompleted, boolean isCancelled, Long serviceId, LocalDateTime cancelDateTime, Long cancelledBy, CancellationReason cancelReason,
-                       List<BookingDetails> bookingDetails, BookingDetails booking, List<AppointmentUpdate> appointmentUpdates, List<FollowUpActivity> followUpActivities) {
+                       BookingDetails booking, List<AppointmentUpdate> appointmentUpdates, List<FollowUpActivity> followUpActivities) {
         this.serviceOwnerId = serviceOwnerId;
         this.appointmentId = appointmentId;
         this.startTime = startTime;
@@ -83,7 +83,6 @@ public class Appointment extends BaseEntity {
         if (startTime != null && endTime != null) {
             this.duration = Duration.between(startTime, endTime);
         }
-        this.bookingDetails = bookingDetails;
         this.booking = booking;
         this.appointmentUpdates = appointmentUpdates;
         this.followUpActivities = followUpActivities;
@@ -190,19 +189,14 @@ public class Appointment extends BaseEntity {
         this.serviceId = serviceId;
     }
 
-    public List<BookingDetails> getBookingDetails() {
-        return bookingDetails;
-    }
-
-    public void setBookingDetails(List<BookingDetails> bookingDetails) {
-        this.bookingDetails = bookingDetails;
-    }
-
     public List<FollowUpActivity> getFollowUpActivities() {
         return followUpActivities;
     }
 
     public void setFollowUpActivities(List<FollowUpActivity> followUpActivities) {
+        for (FollowUpActivity followUpActivity : followUpActivities) {
+            followUpActivity.setAppointment(this);
+        }
         this.followUpActivities = followUpActivities;
     }
 

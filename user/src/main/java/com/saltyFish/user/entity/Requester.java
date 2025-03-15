@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -16,12 +17,9 @@ public class Requester extends User {
     @Column(name = "role")
     private Role role;
 
-    private List<Long> requestsHistory = new ArrayList<>();
-    private List<Long> servicesHistory = new ArrayList<>();
-
-    public Requester(String username, String password, String email) {
-        super(username, password, email);
-        this.role = Role.REQUESTER;
+    public Requester(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses, Boolean isMember, Role role) {
+        super(userId, username, password, email, firstName, lastName, phoneNumber, addresses, isMember);
+        this.role = role;
     }
 
     public Role getRole() {
@@ -30,21 +28,5 @@ public class Requester extends User {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public List<Long> getRequestsHistory() {
-        return requestsHistory;
-    }
-
-    public void setRequestsHistory(List<Long> requestsHistory) {
-        this.requestsHistory = requestsHistory;
-    }
-
-    public List<Long> getServicesHistory() {
-        return servicesHistory;
-    }
-
-    public void setServicesHistory(List<Long> servicesHistory) {
-        this.servicesHistory = servicesHistory;
     }
 }
