@@ -1,0 +1,9 @@
+package com.saltyFish.user.repository;
+
+import com.saltyFish.user.entity.Provider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+public class ProviderDAO extends UserDAO {
+
+}

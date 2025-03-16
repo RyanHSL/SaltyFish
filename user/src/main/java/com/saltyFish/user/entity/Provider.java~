@@ -14,9 +14,11 @@ public class Provider extends User {
     @Enumerated(EnumType.ORDINAL)
     private Role role;
 
-    public Provider(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses, Boolean isMember, Role role) {
-        super(userId, username, password, email, firstName, lastName, phoneNumber, addresses, isMember);
-        this.role = role;
+    private Double rating;
+
+    public Provider(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses) {
+        super(userId, username, password, email, firstName, lastName, phoneNumber, addresses, false, true, null, null, null);
+        this.role = Role.SERVICE_PROVIDER;
     }
 
     public Role getRole() {
@@ -27,19 +29,11 @@ public class Provider extends User {
         this.role = role;
     }
 
-    public List<Long> getServicesHistory() {
-        return servicesHistory;
+    public Double getRating() {
+        return rating;
     }
 
-    public void setServicesHistory(List<Long> servicesHistory) {
-        this.servicesHistory = servicesHistory;
-    }
-
-    public List<Long> getRequestsHistory() {
-        return requestsHistory;
-    }
-
-    public void setRequestsHistory(List<Long> requestsHistory) {
-        this.requestsHistory = requestsHistory;
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

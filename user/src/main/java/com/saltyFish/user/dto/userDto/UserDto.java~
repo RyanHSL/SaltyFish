@@ -1,0 +1,24 @@
+package com.saltyFish.user.dto.userDto;
+
+import jakarta.validation.constraints.Email;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
+public abstract class UserDto {
+
+    private String username;
+    private String password;
+    @Email
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private Set<Long> addresses = new HashSet<>();
+    private Boolean isMember;
+    private Boolean isActive;
+    private LocalDateTime startDate;
+    private LocalDateTime expiryDate;
+    private Integer level;
+}

@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
         url = "${personalServicems.url}")
 public interface PersonalServiceClient {
 
-    @GetMapping("/api/v1/personalService/{id}")
+    @GetMapping("/personalService/{id}")
     PersonalService getPersonalService(@PathVariable("id") Long id);
 }

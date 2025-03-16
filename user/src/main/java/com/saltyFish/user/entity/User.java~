@@ -29,10 +29,8 @@ public abstract class User extends BaseEntity {
     @NotNull @NotEmpty
     private String email;
 
-    @NotNull @NotEmpty
     private String firstName;
 
-    @NotNull @NotEmpty
     private String lastName;
 
     private String phoneNumber;
@@ -41,7 +39,6 @@ public abstract class User extends BaseEntity {
 
     private Boolean isMember;
 
-    @NotNull @NotEmpty
     private Boolean isActive;
 
     private LocalDateTime startDate;
