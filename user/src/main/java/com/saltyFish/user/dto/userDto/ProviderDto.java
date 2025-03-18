@@ -25,4 +25,20 @@ public class ProviderDto extends UserDto {
         super(username, password, email, firstName, lastName, phoneNumber, addresses, isMember, isActive, startDate, expiryDate, level);
         this.role = role;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
 }

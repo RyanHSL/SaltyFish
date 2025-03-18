@@ -19,6 +19,7 @@ public class Provider extends User {
     public Provider(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses) {
         super(userId, username, password, email, firstName, lastName, phoneNumber, addresses, false, true, null, null, null);
         this.role = Role.SERVICE_PROVIDER;
+        this.rating = 0.0;
     }
 
     public Role getRole() {

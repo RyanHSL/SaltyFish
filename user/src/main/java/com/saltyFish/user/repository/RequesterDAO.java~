@@ -20,7 +20,8 @@ public class RequesterDAO extends UserDAO {
      * @param pageable
      * @return a list of users
      */
-    public Page<Requester> findAllRequestersPageable(Pageable pageable) {
+    @Override
+    public Page<Requester> findAllUsersPageable(Pageable pageable) {
         TypedQuery<Requester> query = entityManager.createQuery("SELECT u FROM user u", Requester.class);
         query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         query.setMaxResults(pageable.getPageSize());

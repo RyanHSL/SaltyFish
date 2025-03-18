@@ -16,6 +16,8 @@ public class Provider extends User {
 
     private Double rating;
 
+    public Provider() {}
+
     public Provider(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses) {
         super(userId, username, password, email, firstName, lastName, phoneNumber, addresses, false, true, null, null, null);
         this.role = Role.SERVICE_PROVIDER;

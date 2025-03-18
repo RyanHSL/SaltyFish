@@ -1,9 +1,7 @@
 package com.saltyFish.user.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -19,20 +17,23 @@ public abstract class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @NotNull @NotEmpty
+    @NotEmpty(message = "Username can not be a null or empty")
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @NotNull @NotEmpty
+    @NotEmpty(message = "Password can not be a null or empty")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
-    @Email
-    @NotNull @NotEmpty
+    @Email(message = "Email is not valid")
+    @NotEmpty(message = "Email can not be a null or empty")
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @NotNull @NotEmpty
+    @NotEmpty(message = "First Name can not be a null or empty")
     private String firstName;
 
-    @NotNull @NotEmpty
+    @NotEmpty(message = "Last Name can not be a null or empty")
     private String lastName;
 
     private String phoneNumber;
@@ -49,6 +50,8 @@ public abstract class User extends BaseEntity {
     private LocalDateTime expiryDate;
 
     private Integer level;
+
+    public User() {}
 
     public User(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses, Boolean isMember, Boolean isActive, LocalDateTime startDate, LocalDateTime expiryDate, Integer level) {
         this.userId = userId;

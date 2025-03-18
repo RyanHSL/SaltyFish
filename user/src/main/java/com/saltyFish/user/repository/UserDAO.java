@@ -4,8 +4,13 @@ import com.saltyFish.user.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,10 +46,16 @@ public class UserDAO extends BaseDAO<User, Long> {
      * @param email
      * @return a list of users
      */
-    public List<User> findUsersByEmail(String email) {
-        return entityManager.
-                createQuery("SELECT u FROM user u where email = :email", User.class)
-                .setParameter("email", email).getResultList();
+    public Optional<User> findUsersByEmail(String email) {
+        try {
+            User user = entityManager.
+                    createQuery("SELECT u FROM user u where email = :email", User.class)
+                    .setParameter("email", email).getSingleResult();
+            return Optional.of(user);
+        }
+        catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -52,10 +63,16 @@ public class UserDAO extends BaseDAO<User, Long> {
      * @param phoneNumber
      * @return a list of users
      */
-    public List<User> findUsersByPhoneNumber(String phoneNumber) {
-        return entityManager.
-                createQuery("SELECT u FROM user u where phoneNumber = :phoneNumber", User.class)
-                .setParameter("phoneNumber", phoneNumber).getResultList();
+    public Optional<User> findUsersByPhoneNumber(String phoneNumber) {
+        try {
+            User user = entityManager.
+                    createQuery("SELECT u FROM user u where phoneNumber = :phoneNumber", User.class)
+                    .setParameter("phoneNumber", phoneNumber).getSingleResult();
+            return Optional.of(user);
+        }
+        catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -63,10 +80,16 @@ public class UserDAO extends BaseDAO<User, Long> {
      * @param firstName
      * @return a list of users
      */
-    public List<User> findUsersByFirstName(String firstName) {
-        return entityManager.
-                createQuery("SELECT u FROM user u where firstName = :firstName", User.class)
-                .setParameter("firstName", firstName).getResultList();
+    public Optional<List<User>> findUsersByFirstName(String firstName) {
+        try {
+            List<User> users = entityManager.
+                    createQuery("SELECT u FROM user u where firstName = :firstName", User.class)
+                    .setParameter("firstName", firstName).getResultList();
+            return Optional.of(users);
+        }
+        catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     /**
@@ -116,5 +139,19 @@ public class UserDAO extends BaseDAO<User, Long> {
     public long countNonMemberedUsers() {
         return entityManager.createQuery("SElECT COUNT(u) FROM user u WHERE isMember = false", Long.class)
                 .getSingleResult();
+    }
+
+    /**
+     *
+     * @param pageable
+     * @return a list of users
+     */
+    public Page<User> findAllUsersPageable(Pageable pageable) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM user u", User.class);
+        query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        query.setMaxResults(pageable.getPageSize());
+        List<User> users = query.getResultList();
+        long total = count();
+        return new PageImpl<>(users, pageable, total);
     }
 }

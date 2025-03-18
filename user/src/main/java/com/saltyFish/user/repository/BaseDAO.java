@@ -26,8 +26,9 @@ public abstract class BaseDAO<T, ID extends Serializable> {
                 .getResultList();
     }
 
-    public void save(T entity) {
+    public T save(T entity) {
         entityManager.persist(entity);
+        return entity;
     }
 
     public T update(T entity) {
