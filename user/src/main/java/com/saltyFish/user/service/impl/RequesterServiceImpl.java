@@ -36,13 +36,13 @@ public class RequesterServiceImpl implements UserService {
 
     @Override
     public RequesterDto registerUser(UserDto requesterDto) {
-        if (!userDAO.findUsersByEmail(requesterDto.getEmail()).isEmpty()) {
+        if (requesterDAO.findUsersByEmail(requesterDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(String.format("User with email %s already exists", requesterDto.getEmail()));
         }
         String encodedPassword = passwordEncoder.encode(requesterDto.getPassword());
         Requester requester = UserMapper.maptoRequester((RequesterDto) requesterDto, new Requester());
         requester.setPassword(encodedPassword);
-        User savedRequester = requesterDAO.save(requester);
+        requesterDAO.save(requester);
         return (RequesterDto) requesterDto;
     }
 
@@ -82,11 +82,12 @@ public class RequesterServiceImpl implements UserService {
         }
     }
 
-    public Page<RequesterDto> findAllRequesters(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    @Override
+    public Page<UserDto> findAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Requester> requesterPage = requesterDAO.findAllRequestersPageable(pageable);
-        Page<RequesterDto> requesterDtoPage = requesterPage.
+        Page<UserDto> requesterDtoPage = requesterPage.
                 map(requester -> UserMapper.mapToRequesterDto(requester, new RequesterDto()));
         return requesterDtoPage;
     }

@@ -42,5 +42,5 @@ public interface UserService {
      * @param sortOrder
      * @return list of users
      */
-    Page<UserDto> findAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    Page<UserDto> findAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder;
 }

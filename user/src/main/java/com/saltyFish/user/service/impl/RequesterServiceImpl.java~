@@ -36,13 +36,13 @@ public class RequesterServiceImpl implements UserService {
 
     @Override
     public RequesterDto registerUser(UserDto requesterDto) {
-        if (!userDAO.findUsersByEmail(requesterDto.getEmail()).isEmpty()) {
+        if (requesterDAO.findUsersByEmail(requesterDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(String.format("User with email %s already exists", requesterDto.getEmail()));
         }
         String encodedPassword = passwordEncoder.encode(requesterDto.getPassword());
         Requester requester = UserMapper.maptoRequester((RequesterDto) requesterDto, new Requester());
         requester.setPassword(encodedPassword);
-        User savedRequester = requesterDAO.save(requester);
+        requesterDAO.save(requester);
         return (RequesterDto) requesterDto;
     }
 
@@ -80,11 +80,6 @@ public class RequesterServiceImpl implements UserService {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @Override
-    public Page<UserDto> findAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        return null;
     }
 
     public Page<RequesterDto> findAllRequesters(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {

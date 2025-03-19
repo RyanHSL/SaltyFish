@@ -1,5 +1,8 @@
 package com.saltyFish.user.controller;
 
+import com.saltyFish.user.constants.AppConstants;
+import com.saltyFish.user.constants.UserConstants;
+import com.saltyFish.user.dto.APIResponse;
 import com.saltyFish.user.dto.ErrorResponseDto;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -14,13 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerProperties;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.saltyFish.user.dto.userDto.UserDto;
+import com.saltyFish.user.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/users", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -29,11 +39,30 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    private UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @Value("${build.version}")
     private String buildVersion;
 
     @Autowired
     private Environment environment;
+
+    @GetMapping("/all")
+    public ResponseEntity<APIResponse> getAllUsers(@RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                   @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                   @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY) String sortBy,
+                                                   @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER) String sortOrder) {
+        Page<UserDto> users = userService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+        if (users == null || users.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, users.getContent(), users.getNumber(), users.getSize(), users.getTotalElements(), users.getTotalPages(), users.isLast()));
+    }
 
     @Operation(
             summary = "Get Build information",

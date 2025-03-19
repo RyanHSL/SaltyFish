@@ -23,7 +23,7 @@ public class APIResponse<T> {
     private T content;
     private Integer pageNumber;
     private Integer pageSize;
-    private Integer totalElements;
+    private Long totalElements;
     private Integer totalPages;
     private boolean lastPage;
 
@@ -38,7 +38,7 @@ public class APIResponse<T> {
         this.content = content;
     }
 
-    public APIResponse(String statusCode, String statusMsg, T content, Integer pageNumber, Integer pageSize, Integer totalElements, Integer totalPages, boolean lastPage) {
+    public APIResponse(String statusCode, String statusMsg, T content, Integer pageNumber, Integer pageSize, Long totalElements, Integer totalPages, boolean lastPage) {
         this.statusCode = statusCode;
         this.statusMsg = statusMsg;
         this.content = content;

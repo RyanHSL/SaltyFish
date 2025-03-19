@@ -143,9 +143,9 @@ public class AppointmentController {
         if (appointments == null || appointments.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        Integer totalElement = appointmentService.countUserAppointments(userId);
-        Integer totalPage = totalElement / pageSize;
-        boolean isLastPage = (pageNumber + 1) >= totalPage;
+//        Integer totalElement = appointmentService.countUserAppointments(userId);
+//        Integer totalPage = totalElement / pageSize;
+//        boolean isLastPage = (pageNumber + 1) >= totalPage;
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, appointments.getContent(), appointments.getNumber(), appointments.getSize(), appointments.getTotalElements(), appointments.getTotalPages(), appointments.isLast()));
     }

@@ -11,6 +11,9 @@ import com.saltyFish.user.repository.UserDAO;
 import com.saltyFish.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,14 +35,14 @@ public class ProviderServiceImpl implements UserService {
 
     @Override
     public ProviderDto registerUser(UserDto userDto) {
-        if (!userDAO.findUsersByEmail(userDto.getEmail()).isEmpty()) {
+        if (providerDAO.findUsersByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(String.format("User with email %s already exists", userDto.getEmail()));
         }
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         ProviderDto providerDto = (ProviderDto) userDto;
         providerDto.setPassword(encodedPassword);
         Provider provider = UserMapper.mapToProvider(providerDto, new Provider());
-        Provider savedProvider = (Provider) providerDAO.save(provider);
+        providerDAO.save(provider);
         return providerDto;
     }
 
@@ -81,6 +84,15 @@ public class ProviderServiceImpl implements UserService {
 
     @Override
     public Page<UserDto> findAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        return null;
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Provider> providerPage = providerDAO.findAllProvidersPageable(pageable);
+        Page<UserDto> providerDtoPage = providerPage.
+                map(provider -> UserMapper.mapToProviderDto(provider, new ProviderDto()));
+        return providerDtoPage;
+    }
+
+    public void promoteService(Service service) {
+
     }
 }
