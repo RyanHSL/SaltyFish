@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -30,8 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.saltyFish.user.dto.userDto.UserDto;
 import com.saltyFish.user.service.UserService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/api/v1/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
@@ -41,9 +38,14 @@ public class UserController {
 
     private UserService userService;
 
+    private UserService providerService;
+
+    private UserService requesterService;
+
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserService providerService, UserService requesterService) {
         this.userService = userService;
+        this.providerService = providerService;
     }
 
     @Value("${build.version}")
@@ -63,6 +65,32 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, users.getContent(), users.getNumber(), users.getSize(), users.getTotalElements(), users.getTotalPages(), users.isLast()));
     }
+
+    @GetMapping("/provider/all")
+    public ResponseEntity<APIResponse> getAllProviders(@RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                       @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                       @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+                                                       @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder) {
+        Page<UserDto> providers = providerService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+        if (providers == null || providers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, providers.getContent(), providers.getNumber(), providers.getSize(), providers.getTotalElements(), providers.getTotalPages(), providers.isLast()));
+    }
+
+    @GetMapping("/requester/all")
+    public ResponseEntity<APIResponse> getAllRequesters(@RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                        @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                        @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+                                                        @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder) {
+        Page<UserDto> requesters = requesterService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+        if (requesters == null || requesters.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200));
+    }
+
+
 
     @Operation(
             summary = "Get Build information",

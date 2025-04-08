@@ -1,17 +1,13 @@
 package com.saltyFish.user.dto.userDto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.saltyFish.user.entity.User;
 import jakarta.validation.constraints.Email;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
-public class UserDto {
+public class UserDetails {
 
     private String username;
-    @JsonIgnore
-    private String password;
     @Email
     private String email;
     private Boolean isMember;
@@ -19,19 +15,21 @@ public class UserDto {
     private LocalDateTime startDate;
     private LocalDateTime expiryDate;
     private Integer level;
+    private RequesterProfileDto requesterProfile;
+    private ProviderProfileDto providerProfile;
 
-    public UserDto() {
-    }
+    public UserDetails() {}
 
-    public UserDto(String username, String password, String email, Boolean isMember, Boolean isActive, LocalDateTime startDate, LocalDateTime expiryDate, Integer level) {
+    public UserDetails(String username, String email, Boolean isMember, Boolean isActive, LocalDateTime startDate, LocalDateTime expiryDate, Integer level, RequesterProfileDto requesterProfile, ProviderProfileDto providerProfile) {
         this.username = username;
-        this.password = password;
         this.email = email;
         this.isMember = isMember;
         this.isActive = isActive;
         this.startDate = startDate;
         this.expiryDate = expiryDate;
         this.level = level;
+        this.requesterProfile = requesterProfile;
+        this.providerProfile = providerProfile;
     }
 
     public String getUsername() {
@@ -40,14 +38,6 @@ public class UserDto {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public @Email String getEmail() {
@@ -96,5 +86,21 @@ public class UserDto {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public RequesterProfileDto getRequesterProfile() {
+        return requesterProfile;
+    }
+
+    public void setRequesterProfile(RequesterProfileDto requesterProfile) {
+        this.requesterProfile = requesterProfile;
+    }
+
+    public ProviderProfileDto getProviderProfile() {
+        return providerProfile;
+    }
+
+    public void setProviderProfile(ProviderProfileDto providerProfile) {
+        this.providerProfile = providerProfile;
     }
 }

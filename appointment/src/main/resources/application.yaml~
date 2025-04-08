@@ -31,17 +31,34 @@ spring:
       ddl-auto: update
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-  config:
-    import: "optional:configserver:http://localhost:8071/"
-  cloud:
-    kubernetes:
-      discovery:
-        all-namespaces: true
-    openfeign:
-      circuitbreaker:
-        enabled: true
-    functions:
-      definition: updateCommunication
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: salty-fish-client
+            client-secret: heNZPrrltsZBT7SEXErwC5zRjykpKDke
+            authorization-grant-type: authorization_code
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/auth/realms/SaltyFish
+  rabbitmq:
+    hots: localhost
+    port: 5672
+    username: guest
+    password: guest
+#  config:
+#    import: "optional:configserver:http://localhost:8071/"
+#  cloud:
+#    kubernetes:
+#      discovery:
+#        all-namespaces: true
+#    openfeign:
+#      circuitbreaker:
+#        enabled: true
+#    functions:
+#      definition: updateCommunication
 #    stream:
 #      bindings:
 #        updateCommunication-in-0:

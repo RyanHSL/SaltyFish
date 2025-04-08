@@ -243,7 +243,7 @@ public class AppointmentController {
     }
     )
     @Retry(name = "getBuildInfo",fallbackMethod = "getBuildInfoFallback")
-    @GetMapping("/build-info")
+    @GetMapping("/public/build-info")
     public ResponseEntity<String> getBuildInfo() {
         logger.debug("getBuildInfo() method Invoked");
         return ResponseEntity
@@ -277,7 +277,7 @@ public class AppointmentController {
     }
     )
     @RateLimiter(name= "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
-    @GetMapping("/java-version")
+    @GetMapping("/public/java-version")
     public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity
                 .status(HttpStatus.OK)

@@ -31,6 +31,28 @@ spring:
       ddl-auto: update
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: salty-fish-client
+            client-secret: heNZPrrltsZBT7SEXErwC5zRjykpKDke
+            authorization-grant-type: authorization_code
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/auth/realms/SaltyFish
+  rabbitmq:
+    hots: localhost
+    port: 5672
+    username: guest
+    password: guest
+  messaging:
+    appointment:
+      queue: appointmentQueue
+      exchange: appointmentExchange
+      routing-key: appointmentRoutingKey
 #  config:
 #    import: "optional:configserver:http://localhost:8071/"
 #  cloud:

@@ -39,7 +39,7 @@ public abstract class BaseDAO<T, ID extends Serializable> {
         entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
     }
 
-    public void deleteByID(ID id) {
+    public void deleteById(ID id) {
         T entity = findById(id);
         if (entity != null) {
             delete(entity);

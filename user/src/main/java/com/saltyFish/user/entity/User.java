@@ -1,5 +1,8 @@
 package com.saltyFish.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.saltyFish.user.dto.userDto.ProviderProfileDto;
+import com.saltyFish.user.lookups.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -9,9 +12,9 @@ import java.util.Set;
 
 //@MappedSuperclass
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+//@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "user")
-public abstract class User extends BaseEntity {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +24,7 @@ public abstract class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @JsonIgnore
     @NotEmpty(message = "Password can not be a null or empty")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
@@ -30,40 +34,30 @@ public abstract class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @NotEmpty(message = "First Name can not be a null or empty")
-    private String firstName;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "requesterId", referencedColumnName = "id")
+    private RequesterProfile requesterProfile;
 
-    @NotEmpty(message = "Last Name can not be a null or empty")
-    private String lastName;
-
-    private String phoneNumber;
-
-    private Set<Long> addresses = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "providerId", referencedColumnName = "id")
+    private ProviderProfile providerProfile;
 
     private Boolean isMember;
-
-    @NotNull @NotEmpty
-    private Boolean isActive;
-
     private LocalDateTime startDate;
-
     private LocalDateTime expiryDate;
-
     private Integer level;
+
+    @Enumerated(EnumType.ORDINAL)
+    private Role role;
 
     public User() {}
 
-    public User(Long userId, String username, String password, String email, String firstName, String lastName, String phoneNumber, Set<Long> addresses, Boolean isMember, Boolean isActive, LocalDateTime startDate, LocalDateTime expiryDate, Integer level) {
+    public User(Long userId, String username, String password, String email, Boolean isMember, LocalDateTime startDate, LocalDateTime expiryDate, Integer level) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.addresses = addresses;
         this.isMember = isMember;
-        this.isActive = isActive;
         this.startDate = startDate;
         this.expiryDate = expiryDate;
         this.level = level;
@@ -101,52 +95,12 @@ public abstract class User extends BaseEntity {
         this.email = email;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public Set<Long> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(Set<Long> addresses) {
-        this.addresses = addresses;
-    }
-
     public Boolean getMember() {
         return isMember;
     }
 
     public void setMember(Boolean member) {
         isMember = member;
-    }
-
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
     }
 
     public LocalDateTime getStartDate() {
@@ -171,5 +125,29 @@ public abstract class User extends BaseEntity {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public RequesterProfile getRequesterProfile() {
+        return requesterProfile;
+    }
+
+    public void setRequesterProfile(RequesterProfile requesterProfile) {
+        this.requesterProfile = requesterProfile;
+    }
+
+    public ProviderProfile getProviderProfile() {
+        return providerProfile;
+    }
+
+    public void setProviderProfile(ProviderProfile providerProfile) {
+        this.providerProfile = providerProfile;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

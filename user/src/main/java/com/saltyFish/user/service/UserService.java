@@ -1,9 +1,9 @@
 package com.saltyFish.user.service;
 
-import com.saltyFish.user.dto.userDto.RequesterDto;
+import com.saltyFish.user.dto.userDto.UserDetails;
 import com.saltyFish.user.dto.userDto.UserDto;
+import com.saltyFish.user.lookups.Role;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -12,14 +12,14 @@ public interface UserService {
      * @param userDto
      * @return registered user details
      */
-    UserDto registerUser(UserDto userDto);
+    UserDetails registerUser(UserDto userDto);
 
     /**
      *
      * @param userDto
      * @return updated user details
      */
-    UserDto updateUser(UserDto userDto);
+    UserDetails updateUser(UserDto userDto);
 
     /**
      *
@@ -42,5 +42,15 @@ public interface UserService {
      * @param sortOrder
      * @return list of users
      */
-    Page<UserDto> findAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    Page<UserDetails> findAllUsers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+
+    /**
+     * @param role
+     * @param pageNumber
+     * @param pageSize
+     * @param sortBy
+     * @param sortOrder
+     * @return list of users based on role
+     */
+    Page<UserDetails> findAllUsers(Role role, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 }
