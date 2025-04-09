@@ -1,6 +1,9 @@
 # SaltyFish
 A platform that connects people who provide services and people who require services
 
+# Frontend Repository
+https://github.com/TeamSaltyFish/SaltyFish-Frontend
+
 # Setup local Postgresql and PgAdmin from docker
 docker network create postgres-network
 
