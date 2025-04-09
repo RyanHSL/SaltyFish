@@ -6,8 +6,6 @@ import com.saltyFish.user.dto.userDto.ProviderProfileDto;
 import com.saltyFish.user.dto.userDto.RequesterProfileDto;
 import com.saltyFish.user.dto.userDto.UserDetails;
 import com.saltyFish.user.dto.userDto.UserDto;
-import com.saltyFish.user.entity.ProviderProfile;
-import com.saltyFish.user.entity.RequesterProfile;
 import com.saltyFish.user.entity.User;
 import com.saltyFish.user.exception.ResourceNotFoundException;
 import com.saltyFish.user.exception.UserAlreadyExistsException;
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
                 throw new ResourceNotFoundException("Provider", "id", userId.toString());
             }
             userDAO.deleteById(userId);
-            requesterProfileDAO.deleteById(userId);
+//            requesterProfileDAO.deleteById(userId);
             return true;
         }
         catch (Exception e) {
@@ -85,7 +83,7 @@ public class UserServiceImpl implements UserService {
             }
             User provider = userDAO.findById(userId);
             provider.setMember(true);
-            userDAO.update(provider);
+//            userDAO.update(provider);
             return true;
         } catch (Exception e) {
             return false;

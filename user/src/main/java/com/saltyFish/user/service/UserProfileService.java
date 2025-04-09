@@ -15,10 +15,10 @@ public interface UserProfileService {
 
     /**
      *
-     * @param requesterProfileDto
+     * @param requesterProfileDto, requesterProfileId
      * @return updated requester profile
      */
-    RequesterProfileDto updateRequester(RequesterProfileDto requesterProfileDto);
+    RequesterProfileDto updateRequester(Long requesterProfileId, RequesterProfileDto requesterProfileDto);
 
     /**
      *

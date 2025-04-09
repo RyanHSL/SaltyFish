@@ -17,7 +17,6 @@ import java.util.Set;
 public class RequesterProfile extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty(message = "First Name can not be a null or empty")
