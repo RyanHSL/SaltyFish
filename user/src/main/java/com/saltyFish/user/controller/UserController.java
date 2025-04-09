@@ -4,6 +4,7 @@ import com.saltyFish.user.constants.AppConstants;
 import com.saltyFish.user.constants.UserConstants;
 import com.saltyFish.user.dto.APIResponse;
 import com.saltyFish.user.dto.ErrorResponseDto;
+import com.saltyFish.user.dto.userDto.UserDetails;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,7 +60,7 @@ public class UserController {
                                                    @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
                                                    @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY) String sortBy,
                                                    @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER) String sortOrder) {
-        Page<UserDto> users = userService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+        Page<UserDetails> users = userService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
         if (users == null || users.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -71,7 +72,7 @@ public class UserController {
                                                        @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
                                                        @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
                                                        @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder) {
-        Page<UserDto> providers = providerService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+        Page<UserDetails> providers = providerService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
         if (providers == null || providers.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -83,7 +84,7 @@ public class UserController {
                                                         @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
                                                         @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
                                                         @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder) {
-        Page<UserDto> requesters = requesterService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+        Page<UserDetails> requesters = requesterService.findAllUsers(pageNumber, pageSize, sortBy, sortOrder);
         if (requesters == null || requesters.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
