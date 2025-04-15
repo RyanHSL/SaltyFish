@@ -10,8 +10,10 @@ import com.saltyFish.user.repository.RequesterProfileDAO;
 import com.saltyFish.user.repository.UserDAO;
 import com.saltyFish.user.service.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.Request;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -75,7 +77,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public Page<RequesterProfileDto> findAllRequesterProfiles(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        return null;
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<RequesterProfile> requesterProfiles = requesterProfileDAO.findAllRequestersPageable(pageable);
+        Page<RequesterProfileDto> requesterProfileDtos = requesterProfiles.map(requesterProfile -> UserProfileMapper.mapToRequesterProfileDto(requesterProfile, new RequesterProfileDto()));
+        return requesterProfileDtos;
     }
 
     @Override
