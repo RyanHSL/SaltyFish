@@ -1,7 +1,9 @@
 package com.saltyFish.appointment.service.impl;
 
+import com.saltyFish.appointment.criteria.BooleanCondition;
 import com.saltyFish.appointment.criteria.NumberCondition;
 import com.saltyFish.appointment.criteria.StringCondition;
+import com.saltyFish.appointment.criteria.TimeCondition;
 import com.saltyFish.appointment.criteria.interfaces.Condition;
 import com.saltyFish.appointment.dto.APIResponse;
 import com.saltyFish.appointment.dto.AppointmentDto;
@@ -303,6 +305,12 @@ public class AppointmentServiceImpl implements AppointmentService {
                 }
                 case StringCondition stringCondition -> {
                     score += stringCondition.getScore(appointment, stringCondition.getStringAttributeName());
+                }
+                case BooleanCondition booleanCondition -> {
+                    score += booleanCondition.getScore(appointment, booleanCondition.getBooleanConditionName());
+                }
+                case TimeCondition timeCondition -> {
+                    score += timeCondition.getScore(appointment, timeCondition.getDateTimeConditionName());
                 }
                 default -> {
                     throw new IllegalArgumentException("Unknown condition: " + condition);
