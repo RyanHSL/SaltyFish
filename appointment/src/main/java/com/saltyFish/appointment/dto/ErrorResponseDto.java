@@ -34,4 +34,6 @@ public class ErrorResponseDto {
     )
     private LocalDateTime errorTime;
 
+    public ErrorResponseDto(String description, HttpStatus httpStatus, String message, LocalDateTime now) {
+    }
 }

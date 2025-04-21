@@ -28,10 +28,58 @@ public class AppointmentDAO extends BaseDAO<Appointment, Long>{
 
     /**
      * Find appointment by customer id
+     * @param customerId
+     * @return A list of appointments
      **/
     public List<Appointment> findByCustomerId(Long customerId) {
         TypedQuery<Appointment> query = entityManager.createQuery(
                 "SELECT a FROM Appointmentmet a WHERE customerId = :customerId", Appointment.class);
+        query.setParameter("customerId", customerId);
+        return query.getResultList();
+    }
+
+    /**
+     * Find all appointments by service owner id
+     * @param serviceOwnerId
+     * @return A list of appointments
+     */
+    public List<Appointment> findByServiceOwnerId(Long serviceOwnerId) {
+        TypedQuery<Appointment> query = entityManager.createQuery("SELECT a FROM Appointment a WHERE a.serviceOwnerId = :serviceOwnerId", Appointment.class);
+        query.setParameter("serviceOwnerId", serviceOwnerId);
+        return query.getResultList();
+    }
+
+    /**
+     * Find all appointments by service owner id and customer id
+     * @param serviceOwnerId
+     * @param customerId
+     * @return A list of appointments
+     */
+    public List<Appointment> findByServiceOwnerIdAndCustomerId(Long serviceOwnerId, Long customerId) {
+        TypedQuery<Appointment> query = entityManager.createQuery("SELECT a FROM Appointment a WHERE a.serviceOwnerId = :serviceOwnerId AND a.customerId = :customerId", Appointment.class);
+        query.setParameter("serviceOwnerId", serviceOwnerId);
+        query.setParameter("customerId", customerId);
+        return query.getResultList();
+    }
+
+    /**
+     * Find all appointments with pagination
+     */
+    public Page<Appointment> findAllAppointmentsPageable(Pageable pageable) {
+        TypedQuery<Appointment> query = entityManager.createQuery("SELECT a FROM Appointment a ORDER BY a." + pageable.getSort().toString().replace(": ", " "), Appointment.class);
+        query.setMaxResults(pageable.getPageSize());
+        List<Appointment> appointments = query.getResultList();
+        long total = count();
+        return new PageImpl<>(appointments, pageable, total);
+    }
+
+    /**
+     *
+     * @param customerId
+     * @return A list of appointments
+     */
+    public List<Appointment> findAppointmentsByCustomerId(Long customerId) {
+        TypedQuery<Appointment> query = entityManager.createQuery("SELECT a FROM Appointment a WHERE a.customerId = :customerId", Appointment.class);
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
@@ -46,7 +94,6 @@ public class AppointmentDAO extends BaseDAO<Appointment, Long>{
         List<Appointment> appointments = query.getResultList();
         long total = countAppointments(customerId);
         return new PageImpl<>(appointments, pageable, total);
-
     }
 
     /**

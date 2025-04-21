@@ -46,4 +46,9 @@ public abstract class BaseDAO<T, ID extends Serializable> {
             delete(entity);
         }
     }
+
+    public Long count() {
+        return entityManager.createQuery("SELECT COUNT(e) FROM " + entityClass.getSimpleName() + " e", Long.class)
+                .getSingleResult();
+    }
 }

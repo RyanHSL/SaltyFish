@@ -1,4 +1,4 @@
-package com.saltyFish.appointment.dto.request;
+package com.saltyFish.service.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

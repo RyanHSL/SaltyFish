@@ -1,7 +1,8 @@
-package com.saltyFish.appointment.dto.request;
+package com.saltyFish.appointment.criteria;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.saltyFish.appointment.criteria.interfaces.Condition;
 import com.saltyFish.appointment.entity.Appointment;
 import com.saltyFish.appointment.lookups.Conditionals;
 
@@ -52,10 +53,10 @@ public class NumberCondition implements Condition<Double> {
 
     @Override
     public boolean evaluate(Double value) {
-        if (operator == Conditionals.EQUAL) {
+        if (operator == Conditionals.EQUALS) {
             return value == this.value;
         }
-        else if (operator == Conditionals.NOT_EQUAL) {
+        else if (operator == Conditionals.NOT_EQUALS) {
             return value != this.value;
         }
         else {
@@ -73,7 +74,9 @@ public class NumberCondition implements Condition<Double> {
     }
 
     @Override
-    public double getScore(Appointment appontinment, String evaluationAttribute) {
+    public double getScore(Appointment appointment, String evaluationAttribute) {
+        double attributeValue = 0.0;
+
         return 0;
     }
 }

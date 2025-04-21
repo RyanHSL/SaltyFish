@@ -2,8 +2,9 @@ package com.saltyFish.appointment.controller;
 
 import com.saltyFish.appointment.constants.AppConstants;
 import com.saltyFish.appointment.constants.AppointmentConstants;
+import com.saltyFish.appointment.criteria.ConditionWrapper;
+import com.saltyFish.appointment.criteria.interfaces.Condition;
 import com.saltyFish.appointment.dto.*;
-import com.saltyFish.appointment.lookups.AppointmentStatus;
 import com.saltyFish.appointment.service.AppointmentService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -34,7 +35,7 @@ import java.util.List;
  */
 
 @Tag(
-        name = "CRUD REST APIs for Appointment in SaltyFish",
+        name = "CRUD REST APIs for Appointment Microservice in SaltyFish",
         description = "CRUD REST APIs in SaltyFish to CREATE, UPDATE, FETCH AND DELETE appointment details"
 )
 @RestController
@@ -58,6 +59,32 @@ public class AppointmentController {
 
 //    @Autowired
 //    private AppointmentContactInfoDto appointmentContactInfoDto;
+
+    @Operation(
+            summary = "Find Appointment REST API",
+            description = "REST API to fetch appointments inside Salty Fish based on conditions"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @PostMapping("/fetch")
+    public ResponseEntity<APIResponse> fetchAppointmentsBy(@RequestBody
+                                                            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY) String sortBy) {
+        return null;
+    }
 
     @Operation(
             summary = "Create Appointment REST API",
@@ -103,8 +130,8 @@ public class AppointmentController {
             )
     }
     )
-    @GetMapping("/fetch")
-    public ResponseEntity<AppointmentDto> fetchAppointmentDetails(@RequestParam(name = "confirmationId")
+    @GetMapping("/fetch/{confirmationId}")
+    public ResponseEntity<AppointmentDto> fetchAppointmentDetails(@PathVariable(name = "confirmationId")
                                                                @Pattern(regexp="(^$|[0-9]{8})",message = "confirmation Id must be 8 digits")
                                                                String confirmationId) {
         AppointmentDto appointmentDto = appointmentService.fetchAppointment(confirmationId);
@@ -143,9 +170,6 @@ public class AppointmentController {
         if (appointments == null || appointments.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-//        Integer totalElement = appointmentService.countUserAppointments(userId);
-//        Integer totalPage = totalElement / pageSize;
-//        boolean isLastPage = (pageNumber + 1) >= totalPage;
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, appointments.getContent(), appointments.getNumber(), appointments.getSize(), appointments.getTotalElements(), appointments.getTotalPages(), appointments.isLast()));
     }
@@ -222,6 +246,37 @@ public class AppointmentController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new APIResponse(AppointmentConstants.STATUS_417, AppointmentConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @Operation(
+            summary = "Find Appointments by score REST API",
+            description = "Get all appointments based on the conditions and the score."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @PostMapping("/score")
+    public ResponseEntity<APIResponse> filterAppointmentsByScore(@RequestBody ConditionWrapper conditionWrapper,
+                                                             @RequestParam(required = false) Long customerId,
+                                                             @RequestParam(required = false) Long serviceOwnerId,
+                                                             @RequestParam(required = false, defaultValue = AppConstants.CUTOFF_SCORE) double cutoffScore) {
+        List<Condition<?>> conditions = conditionWrapper.getConditions();
+        List<AppointmentDto> filteredAppointments = appointmentService.scoreAndFilterAppointments(conditions, customerId, serviceOwnerId, cutoffScore);
+        if (filteredAppointments == null || filteredAppointments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(AppointmentConstants.STATUS_200, AppointmentConstants.MESSAGE_200, filteredAppointments));
     }
 
     @Operation(

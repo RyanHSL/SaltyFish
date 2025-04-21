@@ -1,5 +1,8 @@
 package com.saltyFish.appointment.service.impl;
 
+import com.saltyFish.appointment.criteria.NumberCondition;
+import com.saltyFish.appointment.criteria.StringCondition;
+import com.saltyFish.appointment.criteria.interfaces.Condition;
 import com.saltyFish.appointment.dto.APIResponse;
 import com.saltyFish.appointment.dto.AppointmentDto;
 import com.saltyFish.appointment.dto.BookingDetailsDto;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,6 +65,27 @@ public class AppointmentServiceImpl implements AppointmentService {
             log.error("Error finding available appointments within the time period {} {}", bookingDetails.getStartTime(), bookingDetails.getEndTime(), e);
         }
         return null;
+    }
+
+    @Override
+    public List<AppointmentDto> fetchAllAppointments() {
+        List<Appointment> appointments = appointmentDAO.findAll();
+        return appointments.stream().map(appointment -> AppointmentMapper.mapToAppointmentDto(appointment, new AppointmentDto())).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<AppointmentDto> fetchAllAppointments(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Appointment> appointments = appointmentDAO.findAllAppointmentsPageable(pageable);
+        Page<AppointmentDto> appointmentDtos = appointments.map(appointment -> AppointmentMapper.mapToAppointmentDto(appointment, new AppointmentDto()));
+        return appointmentDtos;
+    }
+
+    @Override
+    public List<AppointmentDto> fetchUserAppointments(Long userId) {
+        List<Appointment> appointments = appointmentDAO.findAppointmentsByCustomerId(userId);
+        return appointments.stream().map(appointment -> AppointmentMapper.mapToAppointmentDto(appointment, new AppointmentDto())).collect(Collectors.toList());
     }
 
 //    private void sendCommunication(Appointment appointment, Customer customer) {
@@ -224,5 +249,68 @@ public class AppointmentServiceImpl implements AppointmentService {
         return isUpdated;
     }
 
+    /**
+     * Score appointments based on conditions and filter by minimum score
+     */
+    @Override
+    public List<AppointmentDto> scoreAndFilterAppointments(List<Condition<?>> conditions, Long customerId, Long serviceOwnerId, double cutoffScore) {
+        List<Appointment> appointments = new ArrayList<>();
+        if (customerId != null && serviceOwnerId != null) {
+            appointments = appointmentDAO.findByServiceOwnerIdAndCustomerId(customerId, serviceOwnerId);
+        }
+        else if (customerId != null) {
+            appointments = appointmentDAO.findByCustomerId(customerId);
+        }
+        else if (serviceOwnerId != null) {
+            appointments = appointmentDAO.findByServiceOwnerId(serviceOwnerId);
+        }
+        else {
+            appointments = appointmentDAO.findAll();
+        }
+        double cutoff = cutoffScore;
+        if (appointments == null || appointments.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<AppointmentDto> scoredAppointments = new ArrayList<>();
+
+        for (Appointment appointment : appointments) {
+            double score = calculateScore(appointment, conditions);
+            AppointmentDto appointmentDto = AppointmentMapper.mapToAppointmentDto(appointment, new AppointmentDto());
+            if (appointmentDto.getScore() != score) {
+                appointmentDto.setScore(score);
+            }
+            if (score >= cutoff) {
+                scoredAppointments.add(appointmentDto);
+            }
+        }
+        return scoredAppointments;
+    }
+
+    /**
+     * Calculate score for a single appointment based on conditions
+     */
+    private double calculateScore(Appointment appointment, List<Condition<?>> conditions) {
+        double score = 0;
+        if (conditions == null || conditions.isEmpty()) {
+            return score;
+        }
+
+        for (Condition<?> condition: conditions) {
+            switch (condition) {
+                case NumberCondition numberCondition -> {
+                    score += numberCondition.getScore(appointment, numberCondition.getNumericalConditionName());
+                }
+                case StringCondition stringCondition -> {
+                    score += stringCondition.getScore(appointment, stringCondition.getStringAttributeName());
+                }
+                default -> {
+                    throw new IllegalArgumentException("Unknown condition: " + condition);
+                }
+            }
+        }
+
+        return score;
+    }
 
 }

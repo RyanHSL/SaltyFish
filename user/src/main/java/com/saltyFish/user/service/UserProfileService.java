@@ -45,10 +45,10 @@ public interface UserProfileService {
 
     /**
      *
-     * @param providerProfileDto
+     * @param providerProfileDto, providerProfileId
      * @return updated provider profile
      */
-    ProviderProfileDto updateProvider(ProviderProfileDto providerProfileDto);
+    ProviderProfileDto updateProvider(Long providerProfileId, ProviderProfileDto providerProfileDto);
 
     /**
      *

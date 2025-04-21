@@ -95,9 +95,9 @@ public class UserServiceImpl implements UserService {
         Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<User> providerPage = userDAO.findAllUsersPageable(pageable);
-        Page<UserDetails> userDtoPage = providerPage.
+        Page<UserDetails> userDetailsPage = providerPage.
                 map(provider -> mapToUserDetails(provider));
-        return userDtoPage;
+        return userDetailsPage;
     }
 
     @Override
@@ -105,9 +105,9 @@ public class UserServiceImpl implements UserService {
         Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<User> userPage = userDAO.findAllUsersPageable(pageable, role);
-        Page<UserDetails> userDtoPage = userPage.
+        Page<UserDetails> userDetailsPage = userPage.
                 map(user -> mapToUserDetails(user));
-        return userDtoPage;
+        return userDetailsPage;
     }
 
     public void promoteService(PersonalServiceDto personalServiceDto) {

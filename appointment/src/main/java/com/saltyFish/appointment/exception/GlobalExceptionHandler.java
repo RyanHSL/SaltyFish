@@ -60,7 +60,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AppointmentAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleCustomerAlreadyExistsException(AppointmentAlreadyExistsException exception,
+    public ResponseEntity<ErrorResponseDto> handleAppointmentAlreadyExistsException(AppointmentAlreadyExistsException exception,
                                                                                  WebRequest webRequest){
         ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
                 webRequest.getDescription(false),

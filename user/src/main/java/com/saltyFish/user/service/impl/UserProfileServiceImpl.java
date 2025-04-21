@@ -2,6 +2,7 @@ package com.saltyFish.user.service.impl;
 
 import com.saltyFish.user.dto.userDto.ProviderProfileDto;
 import com.saltyFish.user.dto.userDto.RequesterProfileDto;
+import com.saltyFish.user.entity.ProviderProfile;
 import com.saltyFish.user.entity.RequesterProfile;
 import com.saltyFish.user.entity.User;
 import com.saltyFish.user.mapper.UserProfileMapper;
@@ -80,7 +81,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<RequesterProfile> requesterProfiles = requesterProfileDAO.findAllRequestersPageable(pageable);
-        Page<RequesterProfileDto> requesterProfileDtos = requesterProfiles.map(requesterProfile -> UserProfileMapper.mapToRequesterProfileDto(requesterProfile, new RequesterProfileDto()));
+        Page<RequesterProfileDto> requesterProfileDtos = requesterProfiles
+                .map(requesterProfile -> UserProfileMapper.mapToRequesterProfileDto(requesterProfile, new RequesterProfileDto()));
         return requesterProfileDtos;
     }
 
@@ -90,17 +92,39 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public ProviderProfileDto updateProvider(ProviderProfileDto providerProfileDto) {
-        return null;
+    public ProviderProfileDto updateProvider(Long providerProfileId, ProviderProfileDto providerProfileDto) {
+        ProviderProfile existingProviderProfile = providerProfileDAO.findById(providerProfileId);
+        if (null == existingProviderProfile) {
+            throw new EntityNotFoundException("Provider profile with id " + providerProfileId + " does not exist.");
+        }
+        ProviderProfile providerProfile = UserProfileMapper.mapToProviderProfile(providerProfileDto, existingProviderProfile);
+        providerProfileDAO.save(providerProfile);
+
+        return providerProfileDto;
     }
 
     @Override
     public boolean deleteProviderProfile(Long userId) {
-        return false;
+        ProviderProfile existingProviderProfile = providerProfileDAO.findById(userId);
+        if (null == existingProviderProfile) {
+            throw new EntityNotFoundException("Provider profile with id " + userId + " does not exist.");
+        }
+        try {
+            providerProfileDAO.delete(existingProviderProfile);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public Page<ProviderProfileDto> findAllProviderProfiles(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        return null;
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<ProviderProfile> providerProfiles = providerProfileDAO.findAllProviderPageable(pageable);
+        Page<ProviderProfileDto> providerProfileDtos = providerProfiles
+                .map(providerProfile -> UserProfileMapper.mapToProviderProfileDto(providerProfile, new ProviderProfileDto()));
+        return providerProfileDtos;
     }
 }

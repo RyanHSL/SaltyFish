@@ -1,6 +1,4 @@
-package com.saltyFish.appointment.lookups;
-
-import org.springframework.context.annotation.Conditional;
+package com.saltyFish.service.lookups;
 
 public enum Conditionals {
     EQUALS(1, "=="),

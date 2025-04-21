@@ -51,6 +51,8 @@ public class AppointmentDto {
     @FutureOrPresent(message = "End Time can not be a past date time")
     private LocalDateTime endTime;
 
+    private Double score;
+
     public AppointmentDto() {}
 
     public AppointmentDto(Long appointmentId, ServiceType serviceType, String confirmationNumber, LocalDateTime startTime, LocalDateTime endTime) {
@@ -99,5 +101,13 @@ public class AppointmentDto {
 
     public void setEndTime(@NotEmpty(message = "End Time can not be a null or empty") @FutureOrPresent(message = "End Time can not be a past date time") LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
     }
 }
