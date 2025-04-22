@@ -1,7 +1,11 @@
 package com.saltyFish.user.controller;
 
+import com.saltyFish.user.dto.APIResponse;
 import com.saltyFish.user.dto.ErrorResponseDto;
+import com.saltyFish.user.dto.userDto.RegistrationRequest;
+import com.saltyFish.user.dto.userDto.UserDto;
 import com.saltyFish.user.service.UserService;
+import com.saltyFish.user.service.impl.KeycloakUserService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +24,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 /**
  * @author Ryan Hershel
@@ -40,9 +45,41 @@ public class UserCredentialController {
 
     private UserService userService;
 
+    private KeycloakUserService keycloakUserService;
+
     @Autowired
-    public UserCredentialController(UserService userService) {
+    public UserCredentialController(UserService userService, KeycloakUserService keycloakUserService) {
         this.userService = userService;
+        this.keycloakUserService = keycloakUserService;
+    }
+
+    @Operation(
+            summary = "Register a SaltyFish user",
+            description = "Register a SaltyFish user with basic privileges"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "HTTP Status Created"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
+        String keycloakId = keycloakUserService.createUserInKeycloak(registrationRequest);
+        UserDto user = userService.findUserBykeycloakId(keycloakId);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponseDto("User registration failed", HttpStatus.INTERNAL_SERVER_ERROR, "User registration failed", LocalDateTime.now()));
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new APIResponse("201", "User registered successfully", user));
     }
 
     @Value("${build.version}")

@@ -10,8 +10,6 @@ import java.util.Set;
 public class UserDto {
 
     private String username;
-    @JsonIgnore
-    private String password;
     @Email
     private String email;
     private Boolean isMember;
@@ -23,9 +21,8 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String username, String password, String email, Boolean isMember, Boolean isActive, LocalDateTime startDate, LocalDateTime expiryDate, Integer level) {
+    public UserDto(String username, String email, Boolean isMember, Boolean isActive, LocalDateTime startDate, LocalDateTime expiryDate, Integer level) {
         this.username = username;
-        this.password = password;
         this.email = email;
         this.isMember = isMember;
         this.isActive = isActive;
@@ -40,14 +37,6 @@ public class UserDto {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public @Email String getEmail() {

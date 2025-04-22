@@ -46,11 +46,20 @@ public class UserServiceImpl implements UserService {
         if (userDAO.findUsersByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(String.format("User with email %s already exists", userDto.getEmail()));
         }
-        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-        userDto.setPassword(encodedPassword);
+//        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+//        userDto.setPassword(encodedPassword);
         User user = UserMapper.maptoUser(userDto, new User());
         User savedUser = userDAO.save(user);
         return mapToUserDetails(savedUser);
+    }
+
+    @Override
+    public UserDto findUserBykeycloakId(String keycloakId) {
+        if (keycloakId == null || keycloakId.isEmpty()) {
+            throw new IllegalArgumentException("KeycloakId cannot be null or empty.");
+        }
+        User user = userDAO.findUserBykeycloakId(keycloakId);
+        return UserMapper.mapToUserDto(user, new UserDto());
     }
 
     @Override

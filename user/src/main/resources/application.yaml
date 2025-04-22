@@ -17,6 +17,36 @@ spring:
       ddl-auto: update
       dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  security:
+    oauth2:
+      resource:
+        jwt:
+          issuer-uri: http://localhost:9080/realms/saltyFish
+      client:
+        registration:
+          keycloak:
+            client-id: user-service-client
+            client-secret: 7HmCk4mBVyvwsAmJmrWWGiAipGsw1MVK
+            provider: keycloak
+            authorization-granted-type: authorization_code
+            redirect-uri-template: http://localhost:9080/login/oauth2/code/keycloak
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9080/realms/saltyFish
+            user-name-attribute: preferred_username
+
+keycloak:
+  auth-server-url: http://localhost:9080/auth
+  realm: saltyFish
+  client-id: user-service-client
+  client-secret: 7HmCk4mBVyvwsAmJmrWWGiAipGsw1MVK
+  username: admin
+  password: admin
+
+jwt:
+  auth:
+    resource-id: user-service-client
+    principal-attribute: preferred_username
 
 management:
   endpoints:

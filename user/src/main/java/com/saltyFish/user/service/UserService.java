@@ -16,6 +16,13 @@ public interface UserService {
 
     /**
      *
+     * @param keycloakId
+     * @return user account details
+     */
+    UserDto findUserBykeycloakId(String keycloakId);
+
+    /**
+     *
      * @param userDto
      * @return updated user details
      */

@@ -6,8 +6,8 @@ import com.saltyFish.user.entity.User;
 public class UserMapper {
 
     public static UserDto mapToUserDto(User user, UserDto userDto) {
+        if (user == null) return null;
         userDto.setUsername(user.getUsername());
-        userDto.setPassword(user.getPassword());
         userDto.setEmail(user.getEmail());
         userDto.setMember(user.getMember());
         userDto.setLevel(user.getLevel());
@@ -17,8 +17,8 @@ public class UserMapper {
     }
 
     public static User maptoUser(UserDto userDto, User user) {
+        if (user == null) return null;
         user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
         user.setMember(userDto.getMember());
         user.setLevel(userDto.getLevel());

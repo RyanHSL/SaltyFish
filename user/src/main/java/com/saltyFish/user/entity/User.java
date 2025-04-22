@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 //@MappedSuperclass
 @Entity
@@ -24,10 +22,10 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @JsonIgnore
-    @NotEmpty(message = "Password can not be a null or empty")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
-    private String password;
+//    @JsonIgnore
+//    @NotEmpty(message = "Password can not be a null or empty")
+//    @Size(min = 6, message = "Password must be at least 6 characters long")
+//    private String password;
 
     @Email(message = "Email is not valid")
     @NotEmpty(message = "Email can not be a null or empty")
@@ -46,21 +44,22 @@ public class User extends BaseEntity {
     private LocalDateTime startDate;
     private LocalDateTime expiryDate;
     private Integer level;
+    private String keycloakId;
 
     @Enumerated(EnumType.ORDINAL)
     private Role role;
 
     public User() {}
 
-    public User(Long userId, String username, String password, String email, Boolean isMember, LocalDateTime startDate, LocalDateTime expiryDate, Integer level) {
-        this.userId = userId;
+    public User(String username, String email, Boolean isMember, LocalDateTime startDate, LocalDateTime expiryDate, Integer level, Role role, String keycloakId) {
         this.username = username;
-        this.password = password;
         this.email = email;
         this.isMember = isMember;
         this.startDate = startDate;
         this.expiryDate = expiryDate;
         this.level = level;
+        this.role = role;
+        this.keycloakId = keycloakId;
     }
 
     public Long getUserId() {
@@ -77,14 +76,6 @@ public class User extends BaseEntity {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public @Email String getEmail() {
@@ -149,5 +140,13 @@ public class User extends BaseEntity {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
     }
 }

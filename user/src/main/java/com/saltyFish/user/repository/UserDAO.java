@@ -137,4 +137,10 @@ public class UserDAO extends BaseDAO<User, Long> {
         return new PageImpl<>(users, pageable, total);
     }
 
+    public User findUserBykeycloakId(String keycloakId) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM user u WHERE u.keycloakId = :keycloakId", User.class);
+        query.setParameter("keycloakId", keycloakId);
+        return query.getSingleResult();
+    }
+
 }
