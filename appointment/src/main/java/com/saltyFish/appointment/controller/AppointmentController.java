@@ -79,11 +79,13 @@ public class AppointmentController {
     }
     )
     @PostMapping("/fetch")
-    public ResponseEntity<APIResponse> fetchAppointmentsBy(@RequestBody
-                                                            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-                                                            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-                                                            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY) String sortBy) {
-        return null;
+    public ResponseEntity<?> fetchAppointmentsByConditions(@RequestBody ConditionWrapper conditionWrapper,
+                                                           @RequestParam(required = false) Long customerId,
+                                                           @RequestParam(required = false) Long serviceOwnerId,
+                                                           @RequestParam(required = false, defaultValue = AppConstants.CUTOFF_SCORE) double cutoffScore) {
+        List<AppointmentDto> appointments = appointmentService.scoreAndFilterAppointments(conditionWrapper.getConditions(), customerId, serviceOwnerId, cutoffScore);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse("200", "Success", appointments));
     }
 
     @Operation(
