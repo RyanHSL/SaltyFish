@@ -26,7 +26,7 @@ spring:
         registration:
           keycloak:
             client-id: user-service-client
-            client-secret: 7HmCk4mBVyvwsAmJmrWWGiAipGsw1MVK
+            client-secret:
             provider: keycloak
             authorization-granted-type: authorization_code
             redirect-uri-template: http://localhost:9080/login/oauth2/code/keycloak
@@ -39,9 +39,9 @@ keycloak:
   auth-server-url: http://localhost:9080/auth
   realm: saltyFish
   client-id: user-service-client
-  client-secret: 7HmCk4mBVyvwsAmJmrWWGiAipGsw1MVK
-  username: admin
-  password: admin
+  client-secret: 
+  username:
+  password:
 
 jwt:
   auth:

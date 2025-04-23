@@ -2,6 +2,8 @@ package com.saltyFish.user.controller;
 
 import com.saltyFish.user.dto.APIResponse;
 import com.saltyFish.user.dto.ErrorResponseDto;
+import com.saltyFish.user.dto.LoginRequest;
+import com.saltyFish.user.dto.LogoutRequest;
 import com.saltyFish.user.dto.userDto.RegistrationRequest;
 import com.saltyFish.user.dto.userDto.UserDto;
 import com.saltyFish.user.service.UserService;
@@ -20,13 +22,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * @author Ryan Hershel
@@ -46,6 +51,18 @@ public class UserCredentialController {
     private UserService userService;
 
     private KeycloakUserService keycloakUserService;
+
+    @Value("${keycloak.auth-server-url}")
+    private String keycloakServerUrl;
+
+    @Value("${keycloak.realm}")
+    private String keycloakRealm;
+
+    @Value("${keycloak.client-id}")
+    private String keycloakClientId;
+
+    @Value("${keycloak.client-secret}")
+    private String clientSecret;
 
     @Autowired
     public UserCredentialController(UserService userService, KeycloakUserService keycloakUserService) {
@@ -81,6 +98,96 @@ public class UserCredentialController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new APIResponse("201", "User registered successfully", user));
     }
+
+    @Operation(
+            summary = "SaltyFish user login",
+            description = "SaltyFish user login with the credentials"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "user logging in successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("client_id", keycloakClientId);
+        params.add("client_secret", clientSecret);
+        params.add("username", loginRequest.getUsername());
+        params.add("password", loginRequest.getPassword());
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        String tokenUrl = keycloakServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/token";
+
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(tokenUrl, request, Map.class);
+            return ResponseEntity.status(HttpStatus.OK).body(new APIResponse("200", "User logged in successfully", response.getBody()));
+        }
+        catch (HttpClientErrorException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponseDto("Unauthorized", HttpStatus.UNAUTHORIZED, "Unauthorized", LocalDateTime.now()));
+        }
+    }
+
+    @Operation(
+            summary = "SaltyFish user login",
+            description = "SaltyFish user login with the credentials"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "user logging in successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody LogoutRequest logoutRquest) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("client_id", keycloakClientId);
+        params.add("client_secret", clientSecret);
+        params.add("refresh_token", logoutRquest.getRefreshToken());
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        String logoutUrl = keycloakServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/logout";
+
+        try {
+            restTemplate.postForEntity(logoutUrl, request, Map.class);
+            return ResponseEntity.status(HttpStatus.OK).body(new APIResponse("200", "User logged out successfully", null));
+        }
+        catch (HttpClientErrorException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDto("Bad request", HttpStatus.BAD_REQUEST, "Bad request", LocalDateTime.now()));
+        }
+
+    }
+
 
     @Value("${build.version}")
     private String buildVersion;

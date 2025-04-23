@@ -60,7 +60,7 @@ public class KeycloakUserService {
         }
 
         String userId = CreatedResponseUtil.getCreatedId(response);
-        User saltyFishUser = new User(request.getUsername(), request.getEmail(), false, LocalDateTime.now(), null, 1, Role.REQUESTER);
+        User saltyFishUser = new User(request.getUsername(), request.getEmail(), false, LocalDateTime.now(), null, 1, Role.REQUESTER, userId);
         userDAO.save(saltyFishUser);
 
         CredentialRepresentation credential = new CredentialRepresentation();
