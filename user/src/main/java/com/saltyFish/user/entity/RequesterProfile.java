@@ -44,10 +44,12 @@ public class RequesterProfile extends BaseEntity {
 
     private List<Long> reviews = new ArrayList<>();
 
+    private Integer age;
+
     public RequesterProfile() {
     }
 
-    public RequesterProfile(Long id, String firstName, String lastName, LocalDateTime dateOfBirth, Gender gender, String last4SSN, String phoneNumber, Set<Long> addresses, List<Appointment> appointments, Double balance, Double rating, List<Long> reviews) {
+    public RequesterProfile(Long id, String firstName, String lastName, LocalDateTime dateOfBirth, Gender gender, String last4SSN, String phoneNumber, Set<Long> addresses, List<Appointment> appointments, Double balance, Double rating, List<Long> reviews, Integer age) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -60,6 +62,7 @@ public class RequesterProfile extends BaseEntity {
         this.balance = balance;
         this.rating = rating;
         this.reviews = reviews;
+        this.age = age;
     }
 
     public Long getId() {
@@ -156,5 +159,13 @@ public class RequesterProfile extends BaseEntity {
 
     public void setReviews(List<Long> reviews) {
         this.reviews = reviews;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }

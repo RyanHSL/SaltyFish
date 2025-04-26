@@ -1,11 +1,12 @@
-package com.saltyFish.appointment.criteria;
+package com.saltyFish.user.criteria;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.saltyFish.appointment.criteria.interfaces.Condition;
-import com.saltyFish.appointment.entity.Appointment;
-import com.saltyFish.appointment.lookups.Conditionals;
+import com.saltyFish.user.criteria.interfaces.Condition;
+import com.saltyFish.user.entity.RequesterProfile;
+import com.saltyFish.user.entity.User;
+import com.saltyFish.user.lookups.Conditionals;
 
 @JsonTypeName("string")
 public class StringCondition implements Condition<String> {
@@ -61,20 +62,22 @@ public class StringCondition implements Condition<String> {
         }
         switch(this.operator) {
             case EQUALS:
-                return stringAttribute.equals(this.value);
+                return stringAttribute.equals(this.value.toLowerCase());
             case CONTAINS:
-                return stringAttribute.contains(this.value);
+                return stringAttribute.contains(this.value.toLowerCase());
             default:
                 return false;
         }
     }
 
     @Override
-    public double getScore(Appointment appointment, String stringAttribute) {
+    public double getScore(User user, RequesterProfile userProfile, String stringAttribute) {
         String stringValue = null;
-        switch(stringAttribute.toLowerCase().trim()) {
-            default -> stringValue = null;
+        switch (stringAttribute) {
+            case "firstName" -> stringValue = userProfile.getFirstName().toLowerCase();
+            case "lastName" -> stringValue = userProfile.getLastName().toLowerCase();
         }
+
         return evaluate(stringValue) ? 1.0 : 0.0;
     }
 }

@@ -61,34 +61,6 @@ public class AppointmentController {
 //    private AppointmentContactInfoDto appointmentContactInfoDto;
 
     @Operation(
-            summary = "Find Appointment REST API",
-            description = "REST API to fetch appointments inside Salty Fish based on conditions"
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            )
-    }
-    )
-    @PostMapping("/fetch")
-    public ResponseEntity<?> fetchAppointmentsByConditions(@RequestBody ConditionWrapper conditionWrapper,
-                                                           @RequestParam(required = false) Long customerId,
-                                                           @RequestParam(required = false) Long serviceOwnerId,
-                                                           @RequestParam(required = false, defaultValue = AppConstants.CUTOFF_SCORE) double cutoffScore) {
-        List<AppointmentDto> appointments = appointmentService.scoreAndFilterAppointments(conditionWrapper.getConditions(), customerId, serviceOwnerId, cutoffScore);
-
-        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse("200", "Success", appointments));
-    }
-
-    @Operation(
             summary = "Create Appointment REST API",
             description = "REST API to create new Appointment inside Salty Fish"
     )
@@ -268,7 +240,7 @@ public class AppointmentController {
             )
     }
     )
-    @PostMapping("/score")
+    @PostMapping("/filterByScore")
     public ResponseEntity<APIResponse> filterAppointmentsByScore(@RequestBody ConditionWrapper conditionWrapper,
                                                              @RequestParam(required = false) Long customerId,
                                                              @RequestParam(required = false) Long serviceOwnerId,

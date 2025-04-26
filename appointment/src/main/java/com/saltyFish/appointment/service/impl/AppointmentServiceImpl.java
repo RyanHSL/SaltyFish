@@ -269,7 +269,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         else {
             appointments = appointmentDAO.findAll();
         }
-        double cutoff = cutoffScore;
         if (appointments == null || appointments.isEmpty()) {
             return new ArrayList<>();
         }
@@ -277,12 +276,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         List<AppointmentDto> scoredAppointments = new ArrayList<>();
 
         for (Appointment appointment : appointments) {
-            double score = calculateScore(appointment, conditions);
+            Double score = calculateScore(appointment, conditions);
             AppointmentDto appointmentDto = AppointmentMapper.mapToAppointmentDto(appointment, new AppointmentDto());
-            if (appointmentDto.getScore() != score) {
+            if (appointmentDto.getScore().equals(score)) {
                 appointmentDto.setScore(score);
             }
-            if (score >= cutoff) {
+            if (score >= cutoffScore) {
                 scoredAppointments.add(appointmentDto);
             }
         }
@@ -318,7 +317,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             }
         }
 
-        return score;
+        return score / conditions.size();
     }
 
 }

@@ -39,7 +39,7 @@ keycloak:
   auth-server-url: http://localhost:9080/auth
   realm: saltyFish
   client-id: user-service-client
-  client-secret: 
+  client-secret:
   username:
   password:
 

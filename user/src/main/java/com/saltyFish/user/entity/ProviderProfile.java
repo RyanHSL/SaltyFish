@@ -40,8 +40,8 @@ public class ProviderProfile extends RequesterProfile {
         this.serviceHistory = serviceHistory;
     }
 
-    public ProviderProfile(Long id, String firstName, String lastName, LocalDateTime dateOfBirth, Gender gender, String last4SSN, String phoneNumber, Set<Long> addresses, List<Appointment> appointments, Double balance, Double rating, List<Long> reviews, Set<Long> services, Set<ServiceType> serviceTypes, Double serviceRating, List<Appointment> serviceHistory) {
-        super(id, firstName, lastName, dateOfBirth, gender, last4SSN, phoneNumber, addresses, appointments, balance, rating, reviews);
+    public ProviderProfile(Long id, String firstName, String lastName, LocalDateTime dateOfBirth, Gender gender, String last4SSN, String phoneNumber, Set<Long> addresses, List<Appointment> appointments, Double balance, Double rating, List<Long> reviews, Set<Long> services, Set<ServiceType> serviceTypes, Double serviceRating, List<Appointment> serviceHistory, Integer age) {
+        super(id, firstName, lastName, dateOfBirth, gender, last4SSN, phoneNumber, addresses, appointments, balance, rating, reviews, age);
         this.services = services;
         this.serviceTypes = serviceTypes;
         this.serviceRating = serviceRating;

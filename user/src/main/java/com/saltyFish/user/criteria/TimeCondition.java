@@ -1,11 +1,12 @@
-package com.saltyFish.appointment.criteria;
+package com.saltyFish.user.criteria;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.saltyFish.appointment.criteria.interfaces.Condition;
-import com.saltyFish.appointment.entity.Appointment;
-import com.saltyFish.appointment.lookups.Conditionals;
+import com.saltyFish.user.criteria.interfaces.Condition;
+import com.saltyFish.user.entity.RequesterProfile;
+import com.saltyFish.user.entity.User;
+import com.saltyFish.user.lookups.Conditionals;
 
 import java.time.LocalDateTime;
 
@@ -57,9 +58,6 @@ public class TimeCondition implements Condition<LocalDateTime> {
 
     @Override
     public boolean evaluate(LocalDateTime value) {
-        if (value == null) {
-            return false;
-        }
         if (operator == Conditionals.EQUALS) {
             return value.equals(this.value);
         }
@@ -77,13 +75,13 @@ public class TimeCondition implements Condition<LocalDateTime> {
         }
     }
 
+
     @Override
-    public double getScore(Appointment appointment, String evaluationAttribute) {
+    public double getScore(User user, RequesterProfile userProfile, String evaluationAttribute) {
         LocalDateTime attributeValue = null;
         switch (evaluationAttribute) {
-            case "startTime" -> attributeValue = appointment.getStartTime();
-            case "endTime" -> attributeValue = appointment.getEndTime();
-            default -> attributeValue = null;
+            case "startDate" -> attributeValue = user.getStartDate();
+            case "expiryDate" -> attributeValue = user.getExpiryDate();
         }
         return evaluate(attributeValue) ? 1.0 : 0.0;
     }

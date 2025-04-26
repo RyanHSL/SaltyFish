@@ -2,6 +2,8 @@ package com.saltyFish.user.controller;
 
 import com.saltyFish.user.constants.AppConstants;
 import com.saltyFish.user.constants.UserConstants;
+import com.saltyFish.user.criteria.ConditionWrapper;
+import com.saltyFish.user.criteria.interfaces.Condition;
 import com.saltyFish.user.dto.APIResponse;
 import com.saltyFish.user.dto.ErrorResponseDto;
 import com.saltyFish.user.dto.userDto.UserDetails;
@@ -25,12 +27,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.saltyFish.user.service.UserService;
+
+import java.util.List;
 
 /**
  * @author Ryan Hershel
@@ -110,7 +111,109 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200));
     }
 
+    @Operation(
+            summary = "Get user by user id",
+            description = "Get user by user id"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/fetch/{userName}")
+    public ResponseEntity<APIResponse> getUserByUserName(@RequestParam(required = false) String userName) {
+        UserDetails userDetails = userService.findUserByUsername(userName);
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, userDetails));
+    }
 
+    @Operation(
+            summary = "Get user by user name",
+            description = "Get user by user name"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/fetch/{userId}")
+    public ResponseEntity<APIResponse> getUserById(@RequestParam(required = false) Long userId) {
+        UserDetails userDetails = userService.findUserById(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, userDetails));
+    }
+
+    @Operation(
+            summary = "Get user by user email",
+            description = "Get user by user email"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @GetMapping("/fetch/{email}")
+    public ResponseEntity<APIResponse> getUserByEmail(@RequestParam(required = false) String email) {
+        UserDetails userDetails = userService.findUserByEmail(email);
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, userDetails));
+    }
+
+
+    @Operation(
+            summary = "Filter user by conditions",
+            description = "Get filtered user details by conditions and score"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+    @PostMapping("/filterByScore")
+    public ResponseEntity<APIResponse> filterUserByScore(@RequestBody ConditionWrapper conditionWrapper,
+                                                         @RequestParam(required = false) Integer genderId,
+                                                         @RequestParam(required = false) Integer roleId,
+                                                         @RequestParam(required = false, defaultValue = AppConstants.CUTOFF_SCORE) double cutOffScore) {
+        List<Condition<?>> conditions = conditionWrapper.getConditions();
+        List<UserDetails> filteredUsers = userService.scoreAndFilterUsers(conditions, genderId, roleId, cutOffScore);
+        if (filteredUsers == null || !filteredUsers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, filteredUsers));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new APIResponse(UserConstants.STATUS_200, UserConstants.MESSAGE_200, filteredUsers));
+    }
 
     @Operation(
             summary = "Get Build information",

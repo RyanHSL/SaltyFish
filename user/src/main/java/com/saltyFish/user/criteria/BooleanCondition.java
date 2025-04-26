@@ -1,11 +1,12 @@
-package com.saltyFish.appointment.criteria;
+package com.saltyFish.user.criteria;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.saltyFish.appointment.criteria.interfaces.Condition;
-import com.saltyFish.appointment.entity.Appointment;
-import com.saltyFish.appointment.lookups.Conditionals;
+import com.saltyFish.user.criteria.interfaces.Condition;
+import com.saltyFish.user.entity.RequesterProfile;
+import com.saltyFish.user.entity.User;
+import com.saltyFish.user.lookups.Conditionals;
 
 @JsonTypeName("boolean")
 public class BooleanCondition implements Condition<Boolean> {
@@ -58,9 +59,6 @@ public class BooleanCondition implements Condition<Boolean> {
         if (value == null) {
             return false;
         }
-        if (value == null) {
-            return false;
-        }
         if (operator == Conditionals.EQUALS) {
             return value == this.value;
         }
@@ -73,12 +71,10 @@ public class BooleanCondition implements Condition<Boolean> {
     }
 
     @Override
-    public double getScore(Appointment appointment, String evaluationAttribute) {
+    public double getScore(User user, RequesterProfile userProfile, String evaluationAttribute) {
         Boolean flagValue = null;
         switch (evaluationAttribute) {
-            case "isCompleted" -> flagValue = appointment.isCompleted();
-            case "isCancelled" -> flagValue = appointment.isCancelled();
-            default -> flagValue = null;
+            case "isMember" -> flagValue = user.getMember();
         }
         return evaluate(flagValue) ? 1.0 : 0.0;
     }

@@ -143,4 +143,23 @@ public class UserDAO extends BaseDAO<User, Long> {
         return query.getSingleResult();
     }
 
+    public List<User> findUserByGenderAndRole(Integer genderId, Integer roleId) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM user u WHERE u.genderId = :genderId AND u.roleId = :roleId AND u.isActive = true", User.class);
+        query.setParameter("genderId", genderId);
+        query.setParameter("roleId", roleId);
+        return query.getResultList();
+    }
+
+    public List<User> findUserByGender(Integer genderId) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM user u WHERE u.genderId = :genderId AND u.isActive = true", User.class);
+        query.setParameter("genderId", genderId);
+        return query.getResultList();
+    }
+
+    public List<User> findUserByRole(Integer roleId) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u FROM user u WHERE u.roleId = :roleId AND u.isActive = true", User.class);
+        query.setParameter("roleId", roleId);
+        return query.getResultList();
+    }
+
 }

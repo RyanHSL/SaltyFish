@@ -1,10 +1,12 @@
-package com.saltyFish.appointment.criteria;
+package com.saltyFish.user.criteria;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.saltyFish.appointment.criteria.interfaces.Condition;
-import com.saltyFish.appointment.entity.Appointment;
-import com.saltyFish.appointment.lookups.Conditionals;
+import com.saltyFish.user.criteria.interfaces.Condition;
+import com.saltyFish.user.entity.ProviderProfile;
+import com.saltyFish.user.entity.RequesterProfile;
+import com.saltyFish.user.entity.User;
+import com.saltyFish.user.lookups.Conditionals;
 
 public class NumberCondition implements Condition<Double> {
 
@@ -15,7 +17,7 @@ public class NumberCondition implements Condition<Double> {
     @JsonCreator
     public NumberCondition(@JsonProperty("numericalConditionName") String numericalConditionName,
                            @JsonProperty("value") double value, Conditionals operator,
-                           @JsonProperty("operatror") Conditionals operatior) {
+                           @JsonProperty("operator") Conditionals operatior) {
         numericalConditionName = numericalConditionName;
         value = value;
         operatior = operatior;
@@ -28,7 +30,7 @@ public class NumberCondition implements Condition<Double> {
         return this.numericalConditionName;
     }
 
-    @JsonProperty("numercialConditionName")
+    @JsonProperty("numericalConditionName")
     public void setNumericalConditionName(String numericalConditionName) {
         this.numericalConditionName = numericalConditionName;
     }
@@ -47,12 +49,15 @@ public class NumberCondition implements Condition<Double> {
     }
 
     @Override
-    public void setOperation(Conditionals operatior) {
-        this.operator = operatior;
+    public void setOperation(Conditionals operator) {
+        this.operator = operator;
     }
 
     @Override
     public boolean evaluate(Double value) {
+        if (value == null) {
+            return false;
+        }
         if (operator == Conditionals.EQUALS) {
             return value == this.value;
         }
@@ -73,15 +78,18 @@ public class NumberCondition implements Condition<Double> {
         }
     }
 
+
     @Override
-    public double getScore(Appointment appointment, String evaluationAttribute) {
-        Double numberValue = null;
+    public double getScore(User user, RequesterProfile userProfile, String evaluationAttribute) {
+        Double attributeValue = null;
+
         switch (evaluationAttribute) {
-            case "durationInMinutes" -> numberValue = Double.valueOf(appointment.getDuration().toMinutes());
-            case "durationInHours" -> numberValue = Double.valueOf(appointment.getDuration().toHours());
-            default -> numberValue = null;
+            case "age" -> attributeValue = Double.valueOf(userProfile.getAge());
+            case "level" -> attributeValue = Double.valueOf(user.getLevel());
+            case "balance" -> attributeValue = userProfile.getBalance();
+            case "serviceRating" -> attributeValue = userProfile instanceof ProviderProfile ? ((ProviderProfile) userProfile).getServiceRating() : null;
         }
 
-        return evaluate(numberValue) ? 1.0 : 0.0;
+        return evaluate(attributeValue) ? 1.0 : 0.0;
     }
 }
